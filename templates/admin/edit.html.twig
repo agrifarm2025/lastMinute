@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block body %}
+<h1>Edit User</h1>
+
+{{ form_start(form) }}
+{{ form_row(form.firstName) }}
+{{ form_row(form.lastName) }}
+{{ form_row(form.email) }}
+{{ form_row(form.roles) }}
+<button type="submit">Save Changes</button>
+{{ form_end(form) }}
+
+<a href="{{ path('admin_user_index') }}">Back to list</a>
+{% endblock %}
