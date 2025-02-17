@@ -1,0 +1,57 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Commander le produit</h1>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card shadow-sm p-4">
+                    {{ form_start(form, {'attr': {'class': 'row g-3', 'novalidate':'novalidate'}}) }}
+
+                    <!-- Quantité -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            {{ form_widget(form.quantite, {'attr': {'class': 'form-control', 'max': produit.quantite}}) }}
+                            {{ form_label(form.quantite, 'Quantité', {'label_attr': {'class': 'form-label'}}) }}
+                        </div>
+                    </div>
+
+                    <!-- Prix -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'readonly': 'readonly'}}) }}
+                            {{ form_label(form.prix, 'Prix', {'label_attr': {'class': 'form-label'}}) }}
+                        </div>
+                    </div>
+
+                    <!-- Adresse -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            {{ form_widget(form.adress, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+                            {{ form_label(form.adress, 'Adresse', {'label_attr': {'class': 'form-label'}}) }}
+                        </div>
+                    </div>
+
+                    <!-- Paiement -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            {{ form_widget(form.paiment, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_label(form.paiment, 'Mode de paiement', {'label_attr': {'class': 'form-label'}}) }}
+                        </div>
+                    </div>
+
+                    <!-- Statut (Masqué) -->
+                    {{ form_widget(form.status, {'attr': {'class': 'd-none'}}) }}
+
+                    <!-- Bouton Approuver -->
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" class="btn btn-success rounded-pill py-3 px-5">Approuver</button>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

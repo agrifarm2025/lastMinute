@@ -1,0 +1,45 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Vendeur</h1>
+        <div class="row justify-content-center">
+            {% for produit in produits %}
+                <div class="col-md-4 mb-4 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="card shadow-sm p-4">
+                        {% if produit.imageFileName %}
+                            <img src="{{ asset('uploads/images/' ~ produit.imageFileName) }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <span class="text-muted">Aucune image</span>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ produit.nom }}</h5>
+                            <p class="card-text">{{ produit.description }}</p>
+                            <p class="card-text"><strong>Prix:</strong> {{ produit.prix }} €</p>
+                            <p class="card-text"><strong>Quantité:</strong> {{ produit.quantite }}</p>
+                            
+                            <div class="text-center mt-3">
+                                
+                                <a href="{{ path('produit_edit', {'id': produit.id}) }}" class="btn btn-warning rounded-pill px-4">Modifier</a>
+                                <a href="{{ path('produit_delete', {'id': produit.id}) }}" class="btn btn-danger rounded-pill px-4" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <p class="text-center">Aucun produit disponible pour le moment.</p>
+                </div>
+            {% endfor %}
+
+            <div class="card-body" data-wow-delay="0.1s">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; margin: auto; cursor: pointer;" data-href="{{ path('produit_add') }}" onclick="window.location.href=this.getAttribute('data-href')">
+                    <h1 class="mb-0">+</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
