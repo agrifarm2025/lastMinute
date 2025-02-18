@@ -25,14 +25,18 @@ class CropController extends AbstractController
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
+            // Persist the crop to the database
             $entityManager->persist($crop);
             $entityManager->flush();
     
+            // Add a success flash message (optional)
             $this->addFlash('success', 'Crop ajouté avec succès !');
     
-            return $this->redirectToRoute('app_soil_add', ['cropId' => $crop->getId()]);
+            // Redirect to the crop affichage page
+            return $this->redirectToRoute('crop_affichage');
         }
     
+        // Render the form if it's not submitted or invalid
         return $this->render('crop/add.html.twig', [
             'form' => $form->createView(),
         ]);
@@ -56,7 +60,7 @@ public function updateformcrop(Request $request, EntityManagerInterface $entityM
 
         $this->addFlash('success', 'Crop updated successfully!');
 
-        return $this->redirectToRoute('crop_affichage');
+        return $this->redirectToRoute('affichage');
     }
 
     return $this->render('crop/add.html.twig', [
@@ -118,4 +122,9 @@ return $this->render('soildata/affichage_soil.html.twig', [
 ]);  
 
 }
+
+
+
+
+
 }

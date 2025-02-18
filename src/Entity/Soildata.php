@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\SoildataRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: SoildataRepository::class)]
 class Soildata
@@ -14,15 +16,39 @@ class Soildata
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le niveau de pH est obligatoire.")]
+    #[Assert\Range(
+        min: 5,
+        max: 30,
+        notInRangeMessage: "Le niveau de pH doit être compris entre {{ min }} et {{ max }}."
+    )]
     private ?float $niveau_ph = null;
-
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le humidité est obligatoire.")]
+    #[Assert\Range(
+        min: 5,
+        max: 30,
+        notInRangeMessage: "Le humidité doit être compris entre {{ min }} et {{ max }}."
+    )]
     private ?float $humidite = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le niveau nutriment est obligatoire.")]
+    #[Assert\Range(
+        min: 5,
+        max: 30,
+        notInRangeMessage: "Le niveanutriment doit être compris entre {{ min }} et {{ max }}."
+    )]
     private ?float $niveau_nutriment = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: "La type sol est obligatoire.")]
+    #[Assert\Length(
+        min: 5,
+        max: 30,
+        minMessage: "La type sol doit contenir au moins 5 caractères.",
+        maxMessage: "La type sol ne peut pas dépasser 90 caractères."
+    )]  
     private ?string $type_sol = null;
 
     #[ORM\ManyToOne(inversedBy: 'soildata')]

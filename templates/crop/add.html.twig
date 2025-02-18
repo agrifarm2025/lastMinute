@@ -49,18 +49,36 @@
                             {{ form_errors(form.datePlantation) }}
                         </div>
                     </div>
-                    <div class="col-12 text-center mt-4">
-                        <a href="{{ path('crop_affichage') }}" class="btn btn-secondary rounded-pill py-3 px-5">Retour</a>
-                        <button type="button" class="btn btn-primary rounded-pill py-3 px-5" onclick="submitCropForm()">Continue</button>
 
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.heurePlantation, {'attr': {'class': 'form-control', 'placeholder': 'HeurePlantation'}}) }}
+                            {{ form_label(form.heurePlantation, 'HeurePlantation', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.heurePlantation) }}
+                        </div>
                     </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.dateCrop, {'attr': {'class': 'form-control', 'placeholder': 'dateCrop'}}) }}
+                            {{ form_label(form.dateCrop, 'Date de crop', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.dateCrop) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.heureCrop, {'attr': {'class': 'form-control', 'placeholder': 'HeureCrop'}}) }}
+                            {{ form_label(form.heureCrop, 'HeureCrop', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.heureCrop) }}
+                        </div>
+                        <div class="col-12 text-center mt-4">
+                            <a href="{{ path('crop_affichage') }}" class="btn btn-secondary rounded-pill py-3 px-5">Retour</a>
+                            <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.8s">
+                                {{ form_widget(form.create, {'attr': {'class': 'btn btn-primary rounded-pill py-3 px-5','value':'Create field'}}) }}
+                            </div>
+                        </div>
                     {{ form_end(form) }}
-                    <script>
-                        function submitCropForm() {
-                            // Trigger form submission
-                            document.getElementById('crop_form').submit();
-                        }
-                    </script>
                     
                 </div> <!-- End of card -->
             </div>

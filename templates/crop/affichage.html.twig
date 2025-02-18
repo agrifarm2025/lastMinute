@@ -20,7 +20,6 @@
                         <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('app_crop_add', {'id': f.id}) }}">modify</a>
                         <a class="btn btn-outline-danger border-2 py-2 px-4 rounded-pill" href="{{ path('delete_crop', {'id': f.id}) }}">Delete</a>
                         <a href="{{ path('list',{'id':f.id}) }}" class="btn btn-primary rounded-pill py-3 px-5">Go to Soil Data</a>
-
                     </div>
                 </div>
             {% endfor %}

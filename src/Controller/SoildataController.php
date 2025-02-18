@@ -12,28 +12,34 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\Persistence\ManagerRegistry as PersistenceManagerRegistry;
 use App\Form\SoildataType;
-
-
-
-
+use App\Repository\CropRepository;
 
 final class SoildataController extends AbstractController
 {
 
-    #[Route("/soildata/affichage_soil", name:"soildata_affichage")]
-    public function affichage(SoildataRepository $em): Response
-{
-    $soil = $em->findAll();
-    return $this->render('soildata/affichage_soil.html.twig', [ 
-        'soil' => $soil,
-    ]);
+    #[Route('/soildata/affichage', name: 'soildata_affichage')]
+    public function affichageSoil(SoildataRepository $soildataRepository, CropRepository $cropRepository): Response
+    {
+        // Fetch all soil data
+        $soil = $soildataRepository->findAll();
     
-}
+        // Fetch the crop (assuming you have a way to get the current crop, e.g., from the session or a specific ID)
+        $crop = $cropRepository->find(1); // Replace `1` with the actual crop ID or logic to fetch the crop
+    
+        if (!$crop) {
+            throw $this->createNotFoundException('Crop not found.');
+        }
+    
+        return $this->render('soildata/affichage_soil.html.twig', [
+            'soil' => $soil,
+            'crop' => $crop, // Pass the crop variable to the template
+        ]);
+    }
 
 
 
 
-#[Route('/soildata/addsoil/{cropId}', name: 'app_soil_add')]
+#[Route('/soildata/{cropId}', name: 'app_soil_add')]
 public function addsoil(Request $request, EntityManagerInterface $em, int $cropId)
 {
     $crop = $em->getRepository(Crop::class)->find($cropId);
