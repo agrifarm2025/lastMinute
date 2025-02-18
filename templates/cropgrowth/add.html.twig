@@ -1,0 +1,118 @@
+{% extends 'cropform.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+            <div class="card shadow-sm p-4 animate__animated animate__fadeInUp">
+                <h2 class="form-title text-center mb-4">Add Growth Stages</h2>
+
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+
+                {{ form_start(form, {'attr': {'class': 'row g-3', 'id': 'crop_growth_form'}}) }}
+                
+                <div class="progress-bar">
+                    <div class="step">
+                        <p class="active">Stage 1</p>
+                        <div class="bullet active">
+                            <span>1</span>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <p>Stage 2</p>
+                        <div class="bullet">
+                            <span>2</span>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <p>Stage 3</p>
+                        <div class="bullet">
+                            <span>3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-outer">
+                    <form action="#">
+                        <div class="page">
+                            <div class="title">Stage plantation</div>
+                            {% for stage in form.stages %}
+                            <div class="field">
+                                <div class="label">Stage Name</div>
+                                {{ form_widget(stage.name, {'attr': {'class': 'form-control', 'placeholder': 'Stage Name'}}) }}
+                                {{ form_errors(stage.name) }}
+                            </div>
+                            <div class="field">
+                                <div class="label">Start Date</div>
+                                {{ form_widget(stage.startdate, {'attr': {'class': 'form-control', 'placeholder': 'Start Date'}}) }}
+                                {{ form_errors(stage.startdate) }}
+                            </div>
+                            <div class="field">
+                                <div class="label">End Date</div>
+                                {{ form_widget(stage.enddate, {'attr': {'class': 'form-control', 'placeholder': 'End Date'}}) }}
+                                {{ form_errors(stage.enddate) }}
+                            </div>
+                            <div class="field">
+                                <div class="label">Observation</div>
+                                {{ form_widget(stage.observation, {'attr': {'class': 'form-control', 'placeholder': 'Observation'}}) }}
+                                {{ form_errors(stage.observation) }}
+                            </div>
+                            {% endfor %}
+
+                            <div class="title">Stage croissance</div>
+
+                            {% for stage in form.stages %}
+                            <div class="field">
+                                <div class="label">Stage Name</div>
+                                {{ form_widget(stage.name, {'attr': {'class': 'form-control', 'placeholder': 'Stage Name'}}) }}
+                                {{ form_errors(stage.name) }}
+                            </div>
+                            <div class="field">
+                                <div class="label">Start Date</div>
+                                {{ form_widget(stage.startdate, {'attr': {'class': 'form-control', 'placeholder': 'Start Date'}}) }}
+                                {{ form_errors(stage.startdate) }}
+                            </div>
+                            <div class="field">
+                                <div class="label">End Date</div>
+                                {{ form_widget(stage.enddate, {'attr': {'class': 'form-control', 'placeholder': 'End Date'}}) }}
+                                {{ form_errors(stage.enddate) }}
+                            </div>
+                            <div class="field">
+                                <div class="label">Observation</div>
+                                {{ form_widget(stage.observation, {'attr': {'class': 'form-control', 'placeholder': 'Observation'}}) }}
+                                {{ form_errors(stage.observation) }}
+                            </div>
+                            {% endfor %}
+                            <div class="field btns">
+                                <button class="nextBtn">Next</button>
+                            </div>
+                        </div>
+
+                        <div class="page">
+                            <div class="title">Confirm Your Info</div>
+                            <div class="field">
+                                <div class="label">Stage Confirmation</div>
+                                <div class="input">
+                                    <input type="text" placeholder="Confirm stages">
+                                </div>
+                            </div>
+                            <div class="field btns">
+                                <button class="prev-1 prev">Previous</button>
+                                <button class="submitBtn">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
