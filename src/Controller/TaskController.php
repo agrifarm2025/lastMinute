@@ -36,6 +36,10 @@ final class TaskController extends AbstractController
         $task->getDate();
         $task->getDeadline();
         $task->setTotal();
+        $outcome=$task->getField()->getOutcome()+$task->getTotal();
+
+
+        $task->getField()->setOutcome($outcome);
         $em->persist($task);  
         $em->flush();  
        

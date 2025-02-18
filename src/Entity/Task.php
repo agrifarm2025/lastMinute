@@ -77,7 +77,7 @@ class Task
         #[Assert\Callback]
         public function validateDeadline(ExecutionContextInterface $context)
         {
-            $defaultDate = new \DateTime('2003-03-20'); // The default date as a DateTime object
+            $defaultDate = new \DateTime('1970-01-01'); // The default date as a DateTime object
             if ($this->date == $defaultDate && $this->deadline == $defaultDate ) {
 
             if ($this->date == $defaultDate) {

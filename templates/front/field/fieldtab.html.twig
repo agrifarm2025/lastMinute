@@ -29,16 +29,21 @@
             {% for f in fields %}
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                
-                <div class="bg-white text-center h-100 p-4 p-xl-5 position-relative">
+                <div class="bg-white  h-100 p-4 p-xl-5 position-relative">
                     <!-- Delete Button -->
                     <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2" data-href="{{ path('delete_field',{'id':f.id}) }}" onclick="window.location.href=this.getAttribute('data-href')" style="z-index: 10;">
                         <i class="fas fa-times"></i>
                     </button>
                 
                     <!-- Card Content -->
-                    <img class="img-fluid mb-4" src="{{ asset('front/img/icon-1.png') }}" alt="">
-                    <h4 class="mb-3">{{ f.name }}</h4>
-                    <p class="mb-4"></p>
+                    <img class="img-fluid mb-4 d-block mx-auto" src="{{ asset('front/img/icon-1.png')}}" alt="">
+                    <h4 class="mb-3 text-center">{{ f.name }}</h4>
+                    <p class="mb-4"><strong>Surface: </strong>{{f.surface}}</p>
+                    <p class="mb-4"><strong>budget: </strong>{{f.budget}}dt</p>
+                    <p class="mb-4"><strong>income: </strong>{{f.income}}dt</p>
+                    <p class="mb-4"><strong>outcome: </strong>{{f.outcome}}dt</p>
+                    <p class="mb-4"><strong>profit: </strong>{{f.profit}}dt</p>
+
                     <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('task', {'id': f.id}) }}">Show details</a>
                     <a class="btn btn-outline-secondary border-2 py-2 px-4 rounded-pill" href="{{ path('field_update', {'id': f.id}) }}">Modify</a>
                 </div>

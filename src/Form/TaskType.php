@@ -28,7 +28,7 @@ class TaskType extends AbstractType
     
     ->add('date', DateType::class, [
         'widget' => 'single_text',
-        'data' =>  new \DateTime('2003-03-20'), 
+        'data' =>  new \DateTime('1970-01-01'), 
 
        ])
             ->add('ressource', TextType::class, ['label' => 'Resources'])
@@ -45,7 +45,7 @@ class TaskType extends AbstractType
     ->add('estimated_duration', TextType::class, ['label' => 'Estimated Duration'])
     ->add('deadline',DateType::class, [
         'widget' => 'single_text',
-        'data' =>  new \DateTime('2003-03-20'), 
+        'data' =>  new \DateTime('1970-01-01'), 
         ])
     ->add('workers', NumberType::class, ['label' => 'Workers'])
     ->add('payment_worker')
