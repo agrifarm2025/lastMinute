@@ -8,6 +8,13 @@
             <div class="col-md-8 offset-md-2">
                 <div class="card">
                     <div class="card-body">
+                        <!-- Display image if it exists -->
+                        {% if article.image %}
+                            <div class="text-center mb-4">
+                                <img src="{{ asset(article.image) }}" alt="{{ article.title }}" class="img-fluid" />
+                            </div>
+                        {% endif %}
+                        
                         <p class="card-text">{{ article.content }}</p>
                         <p><strong>Featured Text:</strong> {{ article.featuredText }}</p>
                         <p><strong>Created At:</strong> {{ article.createdAt|date('Y-m-d H:i:s') }}</p>
@@ -26,4 +33,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock %} 

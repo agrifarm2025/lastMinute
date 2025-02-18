@@ -1,14 +1,12 @@
 <?php
-
 namespace App\Form;
 
 use App\Entity\Article;
-use App\Entity\Category;
-use App\Entity\Media;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class ArticleType extends AbstractType
 {
@@ -19,11 +17,18 @@ class ArticleType extends AbstractType
             ->add('slug')
             ->add('content')
             ->add('featuredText')
-            ->add('featuredImage', EntityType::class, [
-                'class' => Media::class,
-                'choice_label' => 'id',
-            ])
-        ;
+            ->add('image', FileType::class, [
+                'label' => 'Upload Image',
+                'mapped' => false, // Important: Do not map to entity property directly
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
+                        'mimeTypesMessage' => 'Please upload a valid image (JPG, PNG, GIF)',
+                    ])
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

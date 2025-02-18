@@ -1,0 +1,15 @@
+{# templates/comment/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}New Comment{% endblock %}
+
+{% block body %}
+    <h1>Create New Comment</h1>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_comment_index') }}">Back to List</a>
+{% endblock %}

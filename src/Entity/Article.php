@@ -11,8 +11,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
-#[ORM\HasLifecycleCallbacks] // Add lifecycle callbacks
-#[UniqueEntity(fields: ['slug'], message: 'This slug is already in use.')] // Ensure slug is unique
+#[ORM\HasLifecycleCallbacks] // Lifecycle callbacks for timestamps
+#[UniqueEntity(fields: ['slug'], message: 'This slug is already in use.')]
 class Article
 {
     #[ORM\Id]
@@ -22,33 +22,21 @@ class Article
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Title cannot be blank.')]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: 'Title cannot be longer than {{ limit }} characters.'
-    )]
+    #[Assert\Length(max: 255, maxMessage: 'Title cannot be longer than {{ limit }} characters.')]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(message: 'Slug cannot be blank.')]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: 'Slug cannot be longer than {{ limit }} characters.'
-    )]
+    #[Assert\Length(max: 255, maxMessage: 'Slug cannot be longer than {{ limit }} characters.')]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\NotBlank(message: 'Content cannot be blank.')]
-    #[Assert\Length(
-        min: 50,
-        minMessage: 'Content must be at least {{ limit }} characters long.'
-    )]
+    #[Assert\Length(min: 10, minMessage: 'Content must be at least {{ limit }} characters long.')]
     private ?string $content = null;
 
     #[ORM\Column(length: 100, nullable: true)]
-    #[Assert\Length(
-        max: 100,
-        maxMessage: 'Featured text cannot be longer than {{ limit }} characters.'
-    )]
+    #[Assert\Length(max: 100, maxMessage: 'Featured text cannot be longer than {{ limit }} characters.')]
     private ?string $featuredText = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -57,25 +45,27 @@ class Article
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
-    /**
-     * @var Collection<int, Category>
-     */
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'articles')]
     private Collection $categories;
 
-    /**
-     * @var Collection<int, Comment>
-     */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'article', orphanRemoval: true)]
-    private Collection $comments;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Assert\File(
+        maxSize: '5M',
+        mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
+        mimeTypesMessage: 'Please upload a valid image file (JPEG, PNG, GIF).'
+    )]
+    private ?string $image = null;
 
-    #[ORM\ManyToOne]
-    private ?Media $featuredImage = null;
+    /**
+     * @var Collection<int, Commentaire>
+     */
+    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'article')]
+    private Collection $commentaire;  // Correct class name
 
     public function __construct()
     {
         $this->categories = new ArrayCollection();
-        $this->comments = new ArrayCollection();
+        $this->commentaire = new ArrayCollection();  // Initialize the collection
     }
 
     public function getId(): ?int
@@ -132,10 +122,10 @@ class Article
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
     {
-        $this->createdAt = $createdAt;
-        return $this;
+        $this->createdAt = new \DateTime();
     }
 
     public function getUpdatedAt(): ?\DateTimeInterface
@@ -143,15 +133,12 @@ class Article
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
+    #[ORM\PreUpdate]
+    public function setUpdatedAtValue(): void
     {
-        $this->updatedAt = $updatedAt;
-        return $this;
+        $this->updatedAt = new \DateTime();
     }
 
-    /**
-     * @return Collection<int, Category>
-     */
     public function getCategories(): Collection
     {
         return $this->categories;
@@ -174,54 +161,44 @@ class Article
         return $this;
     }
 
-    /**
-     * @return Collection<int, Comment>
-     */
-    public function getComments(): Collection
+    public function getImage(): ?string
     {
-        return $this->comments;
+        return $this->image;
     }
 
-    public function addComment(Comment $comment): static
+    public function setImage(?string $image): static
     {
-        if (!$this->comments->contains($comment)) {
-            $this->comments->add($comment);
-            $comment->setArticle($this);
-        }
+        $this->image = $image;
         return $this;
     }
 
-    public function removeComment(Comment $comment): static
+    /**
+     * @return Collection<int, Commentaire>
+     */
+    public function getCommentaire(): Collection
     {
-        if ($this->comments->removeElement($comment)) {
-            if ($comment->getArticle() === $this) {
-                $comment->setArticle(null);
+        return $this->commentaire;
+    }
+
+    public function addCommentaire(Commentaire $commentaire): static
+    {
+        if (!$this->commentaire->contains($commentaire)) {
+            $this->commentaire->add($commentaire);
+            $commentaire->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaire $commentaire): static
+    {
+        if ($this->commentaire->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getArticle() === $this) {
+                $commentaire->setArticle(null);
             }
         }
+
         return $this;
-    }
-
-    public function getFeaturedImage(): ?Media
-    {
-        return $this->featuredImage;
-    }
-
-    public function setFeaturedImage(?Media $featuredImage): static
-    {
-        $this->featuredImage = $featuredImage;
-        return $this;
-    }
-
-    // Lifecycle callbacks
-    #[ORM\PrePersist]
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new \DateTime();
-    }
-
-    #[ORM\PreUpdate]
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new \DateTime();
     }
 }

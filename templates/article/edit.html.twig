@@ -9,22 +9,40 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 {{ form_start(form) }}
+                
+                <!-- Title Field -->
                 <div class="form-group">
                     {{ form_label(form.title) }}
                     {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
                 </div>
+
+                <!-- Content Field -->
                 <div class="form-group">
                     {{ form_label(form.content) }}
                     {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 5}}) }}
                 </div>
+
+                <!-- Featured Text Field -->
                 <div class="form-group">
                     {{ form_label(form.featuredText) }}
                     {{ form_widget(form.featuredText, {'attr': {'class': 'form-control'}}) }}
                 </div>
+
+                <!-- Current Image Display -->
+                {% if article.image %}
+                    <div class="form-group">
+                        <label>Current Image</label>
+                        <img src="{{ asset(article.image) }}" alt="Current Image" class="img-fluid mb-3" style="max-width: 100%; height: auto;">
+                    </div>
+                {% endif %}
+
+                <!-- Image Upload Field -->
                 <div class="form-group">
-                    {{ form_label(form.featuredImage) }}
-                    {{ form_widget(form.featuredImage, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_label(form.image) }}
+                    {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                    <small class="form-text text-muted">Upload a new image if you want to replace the current one.</small>
                 </div>
+
                 <button type="submit" class="btn btn-primary btn-block">Update</button>
                 {{ form_end(form) }}
             </div>
