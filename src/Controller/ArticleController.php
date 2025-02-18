@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use Psr\Log\LoggerInterface;
 use App\Form\ArticleType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -68,20 +69,17 @@ class ArticleController extends AbstractController
             'articles' => $articles,
         ]);
     }
-    #[Route('/article/{id}', name: 'article_delete', methods: ['POST'])]
+
+    #[Route('/article/{id}/delete', name: 'article_delete', methods: ['POST'])]
     public function delete(Request $request, Article $article, EntityManagerInterface $entityManager): Response
     {
-        // Check if the CSRF token is valid
-        if ($this->isCsrfTokenValid('delete' . $article->getId(), $request->request->get('_token'))) {
-            // Remove the article from the database
+        if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
             $entityManager->remove($article);
             $entityManager->flush();
 
-            // Add a flash message to confirm deletion
             $this->addFlash('success', 'Article deleted successfully!');
         }
 
-        // Redirect to the article list page
         return $this->redirectToRoute('article_list');
     }
 }

@@ -19,12 +19,6 @@ class ArticleType extends AbstractType
             ->add('slug')
             ->add('content')
             ->add('featuredText')
-            ->add('createdAt', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('updatedAt', null, [
-                'widget' => 'single_text',
-            ])
             ->add('featuredImage', EntityType::class, [
                 'class' => Media::class,
                 'choice_label' => 'id',

@@ -37,6 +37,11 @@ class Article
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\NotBlank(message: 'Content cannot be blank.')]
+    #[Assert\Length(
+        min: 50,
+        minMessage: 'Content must be at least {{ limit }} characters long.'
+    )]
     private ?string $content = null;
 
     #[ORM\Column(length: 100, nullable: true)]
@@ -86,7 +91,6 @@ class Article
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -98,7 +102,6 @@ class Article
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
-
         return $this;
     }
 
@@ -110,7 +113,6 @@ class Article
     public function setContent(?string $content): static
     {
         $this->content = $content;
-
         return $this;
     }
 
@@ -122,7 +124,6 @@ class Article
     public function setFeaturedText(?string $featuredText): static
     {
         $this->featuredText = $featuredText;
-
         return $this;
     }
 
@@ -134,7 +135,6 @@ class Article
     public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -146,7 +146,6 @@ class Article
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
@@ -164,7 +163,6 @@ class Article
             $this->categories->add($category);
             $category->addArticle($this);
         }
-
         return $this;
     }
 
@@ -173,7 +171,6 @@ class Article
         if ($this->categories->removeElement($category)) {
             $category->removeArticle($this);
         }
-
         return $this;
     }
 
@@ -191,19 +188,16 @@ class Article
             $this->comments->add($comment);
             $comment->setArticle($this);
         }
-
         return $this;
     }
 
     public function removeComment(Comment $comment): static
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
             if ($comment->getArticle() === $this) {
                 $comment->setArticle(null);
             }
         }
-
         return $this;
     }
 
@@ -215,7 +209,6 @@ class Article
     public function setFeaturedImage(?Media $featuredImage): static
     {
         $this->featuredImage = $featuredImage;
-
         return $this;
     }
 
