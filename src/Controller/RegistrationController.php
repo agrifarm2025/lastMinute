@@ -11,6 +11,7 @@ use App\Service\SendMailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -19,13 +20,20 @@ use Symfony\Component\Routing\Attribute\Route;
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager,SendMailService $mail, JWTService $jwt): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager,SendMailService $mail, JWTService $jwt,#[Autowire('%photo_dir%')]string $photoDir): Response
     {
         $user = new Users();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // recuperer le donner de image 
+            if($photo = $form['photo']->getData()){
+                $fileName = uniqid().'.'.$photo->guessExtension();
+                $photo->move($photoDir,$fileName) ;
+            }
+            $user->setImageFileName($fileName);
+            
             /** @var string $plainPassword */
             $plainPassword = $form->get('password')->getData();
 

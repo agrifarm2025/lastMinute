@@ -66,6 +66,12 @@
                                 </div>
 
                                 <div class="col-12">
+                                {{ form_label(registrationForm.photo) }}
+                                {{ form_widget(registrationForm.photo,{'attr':{'class':'form-control'}}) }}
+                                {{ form_errors(registrationForm.photo,{'attr':{'class':'text-danger'}}) }}
+                                </div>
+
+                                <div class="col-12">
                                 <div class="form-check">
                                     {{ form_widget(registrationForm.agreeTerms,{'attr':{'class':'form-check-input'}}) }}
                                     <label class="form-check-label" for="acceptTerms">J'accepte les <a href="#">termes et conditions.</a></label>
