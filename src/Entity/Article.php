@@ -7,8 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
+#[ORM\HasLifecycleCallbacks] // Add lifecycle callbacks
+#[UniqueEntity(fields: ['slug'], message: 'This slug is already in use.')] // Ensure slug is unique
 class Article
 {
     #[ORM\Id]
@@ -17,15 +21,29 @@ class Article
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Title cannot be blank.')]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Title cannot be longer than {{ limit }} characters.'
+    )]
     private ?string $title = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank(message: 'Slug cannot be blank.')]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Slug cannot be longer than {{ limit }} characters.'
+    )]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: 'Featured text cannot be longer than {{ limit }} characters.'
+    )]
     private ?string $featuredText = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -199,5 +217,18 @@ class Article
         $this->featuredImage = $featuredImage;
 
         return $this;
+    }
+
+    // Lifecycle callbacks
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        $this->createdAt = new \DateTime();
+    }
+
+    #[ORM\PreUpdate]
+    public function setUpdatedAtValue(): void
+    {
+        $this->updatedAt = new \DateTime();
     }
 }
