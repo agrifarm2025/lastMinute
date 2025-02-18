@@ -1,0 +1,61 @@
+{% extends 'front/base-front.html.twig' %}
+
+{% block body %}
+
+    {% block n_page %}Fields{% endblock %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="card shadow-sm p-4">
+                    {{ form_start(form, {'attr': {'class': 'row g-3','novalidate':'novalidate'}}) }}
+                    <h2 class="form-title">Create a New Field</h2>
+
+                    <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.3s">
+                        <div class="form-floating">
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Field Name'}}) }}
+                            {{ form_label(form.name, 'Field Name', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+                    </div>
+
+                   
+
+                    <div class="col-12 wow fadeInUp" data-wow-delay="0.4s">
+                        <div class="form-floating">
+                            {{ form_widget(form.surface, {'attr': {'class': 'form-control', 'placeholder': 'Surface Area (acres/hectares)'}}) }}
+                            {{ form_label(form.surface, 'Surface Area', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.surface) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.5s">
+                        <div class="form-floating">
+                            {{ form_widget(form.budget, {'attr': {'class': 'form-control', 'placeholder': 'Budget'}}) }}
+                            {{ form_label(form.budget, 'Budget', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.budget) }}
+                        </div>
+                    </div>
+
+                    
+
+                    <div class="col-12 wow fadeInUp" data-wow-delay="0.7s">
+                        <div class="form-floating">
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Description'}}) }}
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.8s">
+                        {{ form_widget(form.create, {'attr': {'class': 'btn btn-primary rounded-pill py-3 px-5','value':'Create field'}}) }}
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

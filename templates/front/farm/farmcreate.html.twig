@@ -1,0 +1,122 @@
+{% extends 'front/base-front.html.twig' %}
+
+{% block body %}
+
+    {% block n_page %}Farm{% endblock %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="card shadow-sm p-4">
+                    {{ form_start(form, {'attr': {'class': 'row g-3','novalidate':'novalidate'}}) }}
+                    <h2 class="form-title">Please give us your farm coordinates</h2>
+
+                    <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.3s">
+                        <div class="form-floating">
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Farm Name'}}) }}
+                            {{ form_label(form.name, 'Farm Name', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 wow fadeInRight" data-wow-delay="0.3s">
+                        <div class="form-floating">
+                            {{ form_widget(form.location, {'attr': {'class': 'form-control', 'placeholder': 'Farm Location'}}) }}
+                            {{ form_label(form.location, 'Farm Location', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.location) }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 wow fadeInUp" data-wow-delay="0.4s">
+                        <div class="form-floating">
+                            {{ form_widget(form.surface, {'attr': {'class': 'form-control', 'placeholder': 'Surface Area (acres/hectares)'}}) }} {# Added unit hint #}
+                            {{ form_label(form.surface, 'Surface Area', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.surface) }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 wow fadeInUp" data-wow-delay="0.4s">
+                        <div class="form-floating">
+                            {{ form_widget(form.adress, {'attr': {'class': 'form-control', 'placeholder': 'Address'}}) }}
+                            {{ form_label(form.adress, 'Address', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.adress) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.5s">
+                        <div class="form-floating">
+                            {{ form_widget(form.budget, {'attr': {'class': 'form-control', 'placeholder': 'Budget'}}) }}
+                            {{ form_label(form.budget, 'Budget', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.budget) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 wow fadeInRight" data-wow-delay="0.5s">
+                        <div class="form-floating">
+                            {{ form_widget(form.weather, {'attr': {'class': 'form-control', 'placeholder': 'Weather Info'}}) }}
+                            {{ form_label(form.weather, 'Weather Info', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.weather) }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 wow fadeInUp" data-wow-delay="0.6s">
+                        <div class="form-floating">
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Description'}}) }}
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 wow fadeInLeft" data-wow-delay="0.7s">
+                        <div class="form-check"> {# Use form-check for checkboxes #}
+                            {{ form_widget(form.bir, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(form.bir, 'BIR Compliance', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_errors(form.bir) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 wow fadeInUp" data-wow-delay="0.7s">
+                        <div class="form-check">
+                            {{ form_widget(form.photovoltaic, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(form.photovoltaic, 'Photovoltaic System', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_errors(form.photovoltaic) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 wow fadeInRight" data-wow-delay="0.7s">
+                        <div class="form-check">
+                            {{ form_widget(form.fence, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(form.fence, 'Fence', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_errors(form.fence) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 wow fadeInLeft" data-wow-delay="0.8s">
+                        <div class="form-check">
+                            {{ form_widget(form.irrigation, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(form.irrigation, 'Irrigation System', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_errors(form.irrigation) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 wow fadeInUp" data-wow-delay="0.8s">
+                        <div class="form-check">
+                            {{ form_widget(form.cabin, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(form.cabin, 'Cabin', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_errors(form.cabin) }}
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.9s"> {# Increased delay #}
+                        {{ form_widget(form.create, {'attr': {'class': 'btn btn-primary rounded-pill py-3 px-5','value':'Create farm'}}) }}
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'front/base-front.html.twig' %}
+
+{% block body %}
+
+    {% block n_page %}Task{% endblock %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="card shadow-sm p-4" style="background-color: #A9A9A9;">
+                    {{ form_start(form, {'attr': {'class': 'row g-3', 'novalidate': 'novalidate', 'onsubmit': 'return validateDates()'}}) }}
+                    <h2 class="form-title">Please provide task details</h2>
+
+                    <div class="wow fadeInLeft" data-wow-delay="0.3s">
+                        <div class="form-floating">
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Task Name'}}) }}
+                            {{ form_label(form.name, 'Task Name', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+                    </div>
+
+                    <div class="wow fadeInLeft" data-wow-delay="0.4s">
+                        <div class="form-floating">
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Task Description'}}) }}
+                            {{ form_label(form.description, 'Task Description', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 wow fadeInRight" data-wow-delay="0.5s">
+                        <div class="form-floating">
+                            {{ form_widget(form.ressource, {'attr': {'class': 'form-control', 'placeholder': 'Resources Needed'}}) }}
+                            {{ form_label(form.ressource, 'Resources', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.ressource) }}
+                        </div>
+                    </div>
+
+                    <div class="wow fadeInRight" data-wow-delay="0.6s">
+                        <div class="form-floating">
+                            {{ form_widget(form.priority, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_label(form.priority, 'Priority', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.priority) }}
+                        </div>
+                    </div>
+
+                    <!-- Task Date -->
+                    <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.5s">
+                        <div class="form-floating">
+                            {{ form_widget(form.date, {'attr': {'class': 'form-control', 'id': 'task_date'}}) }}
+                            {{ form_label(form.date, 'Task Date', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.date) }}
+                        </div>
+                    </div>
+
+                    <!-- Deadline -->
+                    <div class="col-md-6 wow fadeInRight" data-wow-delay="0.7s">
+                        <div class="form-floating">
+                            {{ form_widget(form.deadline, {'attr': {'class': 'form-control', 'id': 'task_deadline'}}) }}
+                            {{ form_label(form.deadline, 'Deadline', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.deadline) }}
+                        </div>
+                    </div>
+
+                    <div class="wow fadeInLeft" data-wow-delay="0.7s">
+                        <div class="form-floating">
+                            {{ form_widget(form.estimated_duration, {'attr': {'class': 'form-control', 'placeholder': 'Estimated Duration'}}) }}
+                            {{ form_label(form.estimated_duration, 'Estimated Duration', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.estimated_duration) }}
+                        </div>
+                    </div>
+
+                    <div class="wow fadeInLeft" data-wow-delay="0.6s">
+                        <div class="form-floating">
+                            {{ form_widget(form.responsable, {'attr': {'class': 'form-control', 'placeholder': 'Responsible Person'}}) }}
+                            {{ form_label(form.responsable, 'Task Responsible', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.responsable) }}
+                        </div>
+                    </div>
+
+                    <!-- Workers -->
+                    <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.8s">
+                        <div class="form-floating">
+                            {{ form_widget(form.workers, {'attr': {'class': 'form-control', 'type': 'number', 'min': '1', 'placeholder': 'Number of Workers'}}) }}
+                            {{ form_label(form.workers, 'Workers', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.workers) }}
+                        </div>
+                    </div>
+
+                    <!-- Payment Worker -->
+                    <div class="col-md-6 wow fadeInLeft" data-wow-delay="0.9s">
+                        <div class="form-floating">
+                            {{ form_widget(form.payment_worker, {'attr': {'class': 'form-control', 'type': 'number', 'step': '0.01', 'placeholder': 'Worker Payment'}}) }}
+                            {{ form_label(form.payment_worker, 'Worker Payment', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.payment_worker) }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-center wow fadeInUp" data-wow-delay="1s">
+                        {{ form_widget(form.create, {'attr': {'class': 'btn btn-primary rounded-pill py-3 px-5', 'value':'Create Task'}}) }}
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+{% endblock %}
