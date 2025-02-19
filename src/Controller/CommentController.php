@@ -13,17 +13,25 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CommentController extends AbstractController
 {
-    // Route to view all comments related to a specific article
     #[Route('/article/{articleId}/comments', name: 'app_commentaire_index', methods: ['GET'])]
-    public function index(int $articleId, CommentaireRepository $commentaireRepository): Response
-    {
-        $comments = $commentaireRepository->findBy(['article' => $articleId]);
+    public function index(int $articleId, CommentaireRepository $commentaireRepository, EntityManagerInterface $entityManager): Response
+{
+    // Récupérer l'article par ID avec l'EntityManager
+    $article = $entityManager->getRepository(Article::class)->find($articleId);
 
-        return $this->render('commentaire/index.html.twig', [
-            'comments' => $comments,
-        ]);
+    if (!$article) {
+        throw $this->createNotFoundException('Article not found');
     }
 
+    // Récupérer les commentaires associés à l'article
+    $comments = $commentaireRepository->findBy(['article' => $article]);
+
+    // Passer la variable 'comments' à la vue
+    return $this->render('commentaire/index.html.twig', [
+        'comments' => $comments,
+        'article' => $article, // Passer l'article à la vue si vous en avez besoin
+    ]);
+}
     // Route to add a new comment
     #[Route('/article/{articleId}/comment/new', name: 'app_commentaire_new', methods: ['GET', 'POST'])]
     public function new(int $articleId, Request $request, EntityManagerInterface $entityManager): Response

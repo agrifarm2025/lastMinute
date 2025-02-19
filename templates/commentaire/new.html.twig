@@ -1,0 +1,26 @@
+{# templates/commentaire_form.html.twig #}
+{% extends 'base.html.twig' %}
+{% block body %}
+<br>
+<br>
+<br>
+<br>
+<br>
+{{ form_start(form) }}
+
+    <div>
+        {{ form_label(form.rate) }}
+        {{ form_widget(form.rate) }}
+        {{ form_errors(form.rate) }}
+    </div>
+
+    <div>
+        {{ form_label(form.commentaire) }}
+        {{ form_widget(form.commentaire) }}
+        {{ form_errors(form.commentaire) }}
+    </div>
+
+    <button type="submit"class="btn btn-success">Submit</button>
+
+{{ form_end(form) }}
+{% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '/commentaire/index.html.twig' %}
 
 {% block body %}
     <div class="container py-6">
@@ -29,7 +29,10 @@
                             <a href="{{ path('article_list') }}" class="btn btn-secondary">Back to List</a>
                         </div>
                     </div>
-                </div>
+                </div> <!-- Button to view all comments for the article -->
+                        <div class="text-center mt-4">
+                            <a href="{{ path('app_commentaire_index', {'articleId': article.id}) }}" class="btn btn-primary">View Comments</a>
+                        </div>
             </div>
         </div>
     </div>
