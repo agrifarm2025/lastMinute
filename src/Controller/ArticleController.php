@@ -7,6 +7,7 @@ use App\Entity\Commentaire;
 use Psr\Log\LoggerInterface;
 use App\Form\ArticleType;
 use App\Form\CommentaireType;
+use App\Repository\ArticleRepository;
 use App\Repository\CommentaireRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -140,15 +141,23 @@ public function show(Article $article, Request $request, CommentaireRepository $
     }
 
     #[Route('/article/{id}/delete', name: 'article_delete', methods: ['POST'])]
-    public function delete(Request $request, Article $article, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($article);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Article deleted successfully!');
-        }
-
+public function delete(Request $request, Article $article, EntityManagerInterface $entityManager): Response
+{
+    if (!$article) { 
+        $this->addFlash('error', 'Article not found.');
         return $this->redirectToRoute('article_list');
     }
+
+    foreach ($article->getCommentaire() as $commentaire) {
+        $entityManager->remove($commentaire);
+    }
+
+    $entityManager->remove($article);
+    $entityManager->flush();
+
+    $this->addFlash('success', 'Article and related comments deleted successfully.');
+    
+    return $this->redirectToRoute('article_list'); 
+}
+
 }
