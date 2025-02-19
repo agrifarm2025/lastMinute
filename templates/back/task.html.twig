@@ -1,0 +1,58 @@
+{% extends 'back/base-back.html.twig' %}
+{% block body %}
+
+<div class="card-body">
+    <h5 class="card-title">{{field.name}}</h5>
+
+    <table class="table table-bordered datatable">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Address</th>
+                <th scope="col">Bir?</th>
+                    <th scope="col">Bir?</th>
+                <th scope="col">Bir?</th>
+
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in todo %}
+            <tr>
+                <th scope="row"><a href="#">{{ f.id }}</a></th>
+                <td>{{ f.name }}</td>
+                <td>{{ f.budget }}</td>
+                
+                <td><a href="{{ path('joinf', {'id': f.id}) }}" class="btn btn-primary btn-sm">Modify</a></td>
+
+                
+            </tr>
+            {% endfor %}
+            {% for f in inprogress %}
+            <tr>
+                <th scope="row"><a href="#">{{ f.id }}</a></th>
+                <td>{{ f.name }}</td>
+                <td>{{ f.budget }}</td>
+                
+                <td><a href="{{ path('joinf', {'id': f.id}) }}" class="btn btn-primary btn-sm">Modify</a></td>
+
+                
+            </tr>
+            {% endfor %}
+            {% for f in done %}
+            <tr>
+                <th scope="row"><a href="#">{{ f.id }}</a></th>
+                <td>{{ f.name }}</td>
+                <td>{{ f.budget }}</td>
+                
+                <td><a href="{{ path('joinf', {'id': f.id}) }}" class="btn btn-primary btn-sm">Modify</a></td>
+
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

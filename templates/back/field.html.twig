@@ -26,6 +26,8 @@
                 <td>{{ f.income }}</td>
                 <td>{{ f.outcome }}</td>
                 <td>{{ f.profit }}</td>
+                <td><a href="{{ path('joinf', {'id': f.id}) }}" class="btn btn-primary btn-sm">Modify</a></td>
+
                 
             </tr>
             {% endfor %}
