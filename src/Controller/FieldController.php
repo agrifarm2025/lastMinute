@@ -42,7 +42,7 @@ final class FieldController extends AbstractController
         return $this->render("front/field/fieldcreate.html.twig",[
             'form'=>$form
         ]);  
-    } 
+    }
     #[Route('/deletefield/{id}', name: 'delete_field')]  
     public function deletefield(FieldRepository $rep,ManagerRegistry $m,Request $req,$id) // Use ManagerRegistry here  
     {  
@@ -72,35 +72,35 @@ final class FieldController extends AbstractController
         ]);  
     }  
     #[Route('/task/{id}', name: 'task')]  
-    public function show_fields(FieldRepository $fieldRepository, $id): Response
-    {
-        $field = $fieldRepository->find($id);
-        if (!$field) {
-            throw $this->createNotFoundException('No field found for id ' . $id);
-        }
-
-        $todo = $fieldRepository->getToDo($field);
-        $inprogress = $fieldRepository->getInProgress($field);
-        $done = $fieldRepository->getDone($field);
-
-        return $this->render('front/task/tasktab.html.twig', [
-            'id'=>$field->getFarm()->getId(),
-            'field' => $field,
-            'todo' => $todo,
-            'inprogress' => $inprogress,
-            'done' => $done
-        ]);
+public function show_fields(FieldRepository $fieldRepository, $id): Response
+{
+    $field = $fieldRepository->find($id);
+    if (!$field) {
+        throw $this->createNotFoundException('No field found for id ' . $id);
     }
-     
-    /*#[Route('/deletefield/{id}', name: 'delete_field')]  
-    public function deleteteauthor(fieldRepository $rep,ManagerRegistry $m,Request $req,$id) // Use ManagerRegistry here  
-    {  
-        $em = $m->getManager();  
-        $author=$rep->find($id);
-        
-        $em->remove($author);  
-        $em->flush();  
-        return $this->redirectToRoute('aff_field');
-        }*/
 
+   
+    foreach ($field as $fields) {
+        $profit = $fields->getIncome() - $fields->getOutcome(); // Calculate profit
+        $fields->setProfit($profit);  // Assuming you have a setter for profit in your Field entity
+    }
+    $todo = $fieldRepository->getToDo($field);
+    $inprogress = $fieldRepository->getInProgress($field);
+    $done = $fieldRepository->getDone($field);
+
+    return $this->render('front/task/tasktab.html.twig', [
+        'id' => $field->getFarm()->getId(),
+        'field' => $field,
+        'todo' => $todo,
+        'inprogress' => $inprogress,
+        'done' => $done
+    ]);
+}
+
+#[Route('/services', name: 'app_services')]
+public function servicesPage()
+{
+
+    return $this->render('services/services.html.twig');
+}
 }

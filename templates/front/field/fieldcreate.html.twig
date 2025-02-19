@@ -46,6 +46,14 @@
                             {{ form_errors(form.description) }}
                         </div>
                     </div>
+                    <div class="col-12 wow fadeInUp" data-wow-delay="0.7s">
+                        <div class="form-floating">
+                            {{ form_widget(form.crop, {'attr': {'class': 'form-control', 'placeholder': 'Description'}}) }}
+                            {{ form_label(form.crop, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.crop) }}
+                        </div>
+                    </div>
+                    
 
 
                     <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.8s">

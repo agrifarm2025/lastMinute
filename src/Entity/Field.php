@@ -16,7 +16,6 @@ class Field
     #[ORM\Column]
     private ?int $id = null;
 
-  
     #[ORM\Column]
     #[Assert\NotBlank(message: "Surface should not be empty")]
     #[Assert\Positive(message: "Surface must be a positive number")]
@@ -29,11 +28,8 @@ class Field
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'fields')]
-    private ?Farm $Farm = null;
+    private ?Farm $farm = null;
 
-    /**
-     * @var Collection<int, Task>
-     */
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'field', orphanRemoval: true)]
     private Collection $tasks;
 
@@ -56,13 +52,15 @@ class Field
     private ?float $outcome = null;
 
     #[ORM\Column]
-
     private ?float $profit = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Description should not be empty")]
     #[Assert\Length(max: 255, maxMessage: "Description cannot exceed 255 characters")]
     private ?string $description = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Crop $Crop = null;
 
     
 
@@ -75,7 +73,10 @@ class Field
     {
         return $this->id;
     }
-
+    public function setId(int $n)
+    {
+        $this->id=$n;
+    }
     public function getSurface(): ?float
     {
         return $this->surface;
@@ -84,7 +85,6 @@ class Field
     public function setSurface(float $surface): static
     {
         $this->surface = $surface;
-
         return $this;
     }
 
@@ -96,25 +96,20 @@ class Field
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
     public function getFarm(): ?Farm
     {
-        return $this->Farm;
+        return $this->farm;
     }
 
-    public function setFarm(?Farm $Farm): static
+    public function setFarm(?Farm $farm): static
     {
-        $this->Farm = $Farm;
-
+        $this->farm = $farm;
         return $this;
     }
 
-    /**
-     * @return Collection<int, Task>
-     */
     public function getTasks(): Collection
     {
         return $this->tasks;
@@ -126,19 +121,16 @@ class Field
             $this->tasks->add($task);
             $task->setField($this);
         }
-
         return $this;
     }
 
     public function removeTask(Task $task): static
     {
         if ($this->tasks->removeElement($task)) {
-            // set the owning side to null (unless already changed)
             if ($task->getField() === $this) {
                 $task->setField(null);
             }
         }
-
         return $this;
     }
 
@@ -150,7 +142,6 @@ class Field
     public function setBudget(float $budget): static
     {
         $this->budget = $budget;
-
         return $this;
     }
 
@@ -162,7 +153,6 @@ class Field
     public function setIncome(float $income): static
     {
         $this->income = $income;
-
         return $this;
     }
 
@@ -174,7 +164,6 @@ class Field
     public function setOutcome(float $outcome): static
     {
         $this->outcome = $outcome;
-
         return $this;
     }
 
@@ -186,7 +175,6 @@ class Field
     public function setProfit(float $profit): static
     {
         $this->profit = $profit;
-
         return $this;
     }
 
@@ -198,7 +186,20 @@ class Field
     public function setDescription(string $description): static
     {
         $this->description = $description;
+        return $this;
+    }
+
+    public function getCrop(): ?Crop
+    {
+        return $this->Crop;
+    }
+
+    public function setCrop(?Crop $Crop): static
+    {
+        $this->Crop = $Crop;
 
         return $this;
     }
+
+    
 }

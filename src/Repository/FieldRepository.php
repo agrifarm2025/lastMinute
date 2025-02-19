@@ -85,7 +85,18 @@ class FieldRepository extends ServiceEntityRepository
             ->setParameter('status', 'done')
             ->getResult();
     }
-
+   /* public function somme(Field $field)
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                "SELECT COALESCE(SUM(t.total), 0) 
+                 FROM App\Entity\Task t 
+                 WHERE t.field = :field"
+            )
+            ->setParameter('field', $field)
+            ->getSingleScalarResult(); // Ensures a single numeric value is returned
+    }*/
+    
 
     //    /**
     //     * @return Field[] Returns an array of Field objects

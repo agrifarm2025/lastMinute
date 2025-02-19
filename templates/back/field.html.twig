@@ -1,0 +1,36 @@
+{% extends 'back/base-back.html.twig' %}
+{% block body %}
+
+<div class="card-body">
+    <h5 class="card-title">{{farm.name}}</h5>
+
+    <table class="table table-bordered datatable">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Address</th>
+                <th scope="col">Bir?</th>
+                    <th scope="col">Bir?</th>
+                <th scope="col">Bir?</th>
+
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in fields %}
+            <tr>
+                <th scope="row"><a href="#">{{ f.id }}</a></th>
+                <td>{{ f.name }}</td>
+                <td>{{ f.surface }}</td>
+                <td>{{ f.income }}</td>
+                <td>{{ f.outcome }}</td>
+                <td>{{ f.profit }}</td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

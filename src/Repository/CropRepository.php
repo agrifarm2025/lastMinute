@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Farm;
+use App\Entity\Crop;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Farm>
+ * @extends ServiceEntityRepository<Crop>
  */
-class FarmRepository extends ServiceEntityRepository
+class CropRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Farm::class);
+        parent::__construct($registry, Crop::class);
     }
-    public function getFieldJoin($id)
+    public function getCropJoin($id)
     {
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT  b 
-                 FROM App\Entity\Farm a 
-                 INNER JOIN App\Entity\Field b 
-                 WITH a.id = b.farm 
+                 FROM App\Entity\Crop a 
+                 INNER JOIN App\Entity\Soildata b 
+                 WITH a.id = b.crop 
                  WHERE a.id = :id'
             )
             ->setParameter('id', $id)
@@ -30,24 +30,24 @@ class FarmRepository extends ServiceEntityRepository
     }
 
     //    /**
-    //     * @return Farm[] Returns an array of Farm objects
+    //     * @return Crop[] Returns an array of Crop objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('f')
-    //            ->andWhere('f.exampleField = :val')
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('f.id', 'ASC')
+    //            ->orderBy('c.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Farm
+    //    public function findOneBySomeField($value): ?Crop
     //    {
-    //        return $this->createQueryBuilder('f')
-    //            ->andWhere('f.exampleField = :val')
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

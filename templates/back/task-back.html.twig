@@ -1,0 +1,40 @@
+{% extends 'back/base-back.html.twig' %}
+{% block body %}
+
+<div class="card-body">
+    <h5 class="card-title">Farms</h5>
+
+    <table class="table table-bordered datatable">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Address</th>
+                <th scope="col">Bir?</th>
+                <th scope="col">Photovoltaic?</th>
+                <th scope="col">Fence?</th>
+                <th scope="col">Cabin?</th>
+                <th scope="col">Irrigation system?</th>
+                <th scope="col">Budget</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in farm %}
+            <tr>
+                <th scope="row"><a href="#">{{ f.id }}</a></th>
+                <td>{{ f.name }}</td>
+                <td>{{ f.adress }}</td>
+                <td>{{ f.bir ? '✔' : '✘' }}</td>
+                <td>{{ f.photovoltaic ? '✔' : '✘' }}</td>
+                <td>{{ f.fence ? '✔' : '✘' }}</td>
+                <td>{{ f.cabin ? '✔' : '✘' }}</td>
+                <td>{{ f.irrigation ? '✔' : '✘' }}</td>
+                <td>{{ f.budget }}</td>
+                <td><a href="{{ path('join', {'id': f.id}) }}" class="btn btn-primary btn-sm">Modify</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
