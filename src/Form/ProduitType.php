@@ -49,7 +49,7 @@ class ProduitType extends AbstractType
                     ])
                 ],
             ])
-            ->add('create',SubmitType::class)
+            
 ;
     }
 
@@ -57,6 +57,7 @@ class ProduitType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Produit::class,
+            'attr'=>['novalidate'=>'noavalidate'],
         ]);
     }
 }

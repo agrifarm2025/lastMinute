@@ -130,7 +130,7 @@ public function updatefield(ManagerRegistry $m,Request $req,ProduitRepository $r
             'form'=>$form
         ]);  
     } 
-    #[Route("/admin", name: "admin")]
+    #[Route("/admin/app", name: "admin/app")]
 public function admin(EntityManagerInterface $em): Response
 {
     // Récupérer tous les produits (approuvés et non approuvés)
@@ -149,8 +149,8 @@ public function admin(EntityManagerInterface $em): Response
         // Flash message to confirm the action
         $this->addFlash('success', 'Produit approuvé avec succès !');
     
-        // Redirect to the "agricole" page to show approved products
-        return $this->redirectToRoute('agricole');
+        
+        return $this->redirectToRoute('admin/app');
     }
     #[Route('/agricole', name: 'agricole')]
 public function agricole(EntityManagerInterface $em, SessionInterface $session): Response

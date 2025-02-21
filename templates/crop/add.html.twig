@@ -1,0 +1,87 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="card shadow-sm p-4 animate__animated animate__fadeInUp"> <!-- Added animation class -->
+                    <h2 class="form-title text-center mb-4">Add Crop</h2>
+                    
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                    
+                    {{ form_start(form, {'attr': {'class': 'row g-3','id': 'crop_form'}}) }}
+                    
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.cropEvent, {'attr': {'class': 'form-control', 'placeholder': 'Événement de culture'}}) }}
+                            {{ form_label(form.cropEvent, 'Événement de culture', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.cropEvent) }}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.typeCrop, {'attr': {'class': 'form-control', 'placeholder': 'Type de culture'}}) }}
+                            {{ form_label(form.typeCrop, 'Type de culture', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.typeCrop) }}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.methodeCrop, {'attr': {'class': 'form-control', 'placeholder': 'Méthode de culture'}}) }}
+                            {{ form_label(form.methodeCrop, 'Méthode de culture', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.methodeCrop) }}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.datePlantation, {'attr': {'class': 'form-control', 'placeholder': 'Date de plantation'}}) }}
+                            {{ form_label(form.datePlantation, 'Date de plantation', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.datePlantation) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.heurePlantation, {'attr': {'class': 'form-control', 'placeholder': 'HeurePlantation'}}) }}
+                            {{ form_label(form.heurePlantation, 'HeurePlantation', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.heurePlantation) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.dateCrop, {'attr': {'class': 'form-control', 'placeholder': 'dateCrop'}}) }}
+                            {{ form_label(form.dateCrop, 'Date de crop', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.dateCrop) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.heureCrop, {'attr': {'class': 'form-control', 'placeholder': 'HeureCrop'}}) }}
+                            {{ form_label(form.heureCrop, 'HeureCrop', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_errors(form.heureCrop) }}
+                        </div>
+                        <div class="col-12 text-center mt-4">
+                            <a href="{{ path('crop_affichage') }}" class="btn btn-secondary rounded-pill py-3 px-5">Retour</a>
+                            <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.8s">
+                                {{ form_widget(form.create, {'attr': {'class': 'btn btn-primary rounded-pill py-3 px-5','value':'Create field'}}) }}
+                            </div>
+                        </div>
+                    {{ form_end(form) }}
+                    
+                </div> <!-- End of card -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

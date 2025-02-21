@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -18,11 +20,12 @@ class Produit
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: "Le nom du produit est obligatoire.")]
-    #[Assert\Length(max: 255, maxMessage: "Le nom ne peut pas dépasser 255 caractères.")]
+    #[Assert\Length(min: 2, max: 255, minMessage: "Le nom doit contenir au moins 2 caractères.", maxMessage: "Le nom ne peut pas dépasser 255 caractères.")]
     private string $nom;
 
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[Assert\Length(min: 10, minMessage: "La description doit contenir au moins 10 caractères.")]
     private string $description;
 
     #[ORM\Column(type: 'integer')]
@@ -37,6 +40,7 @@ class Produit
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: "Veuillez sélectionner une catégorie.")]
+    
     private string $categories;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
@@ -49,13 +53,23 @@ class Produit
     private bool $approved = false;
 
     #[Vich\UploadableField(mapping: "produit_images", fileNameProperty: "imageFileName")]
+    #[Assert\File(
+        maxSize: "2M",
+        mimeTypes: ["image/jpeg", "image/png"],
+        mimeTypesMessage: "Veuillez télécharger une image valide (JPEG ou PNG) de moins de 2Mo."
+    )]
     private ?File $imageFile = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $imageFileName = null;
 
-    #[ORM\ManyToOne(inversedBy: 'produits')]
-    private ?Commande $Commande = null;
+    #[ORM\ManyToMany(targetEntity: Commande::class, mappedBy: 'produits')]
+    private Collection $commandes;
+
+    public function __construct()
+    {
+        $this->commandes = new ArrayCollection();
+    }
 
     // Getter et setter pour chaque propriété
 
@@ -126,11 +140,6 @@ class Produit
 
     public function setDateCreationProduit(?\DateTimeInterface $dateCreationProduit): self
     {
-        // Vérifiez que la date est bien un objet DateTime ou DateTimeImmutable
-        if ($dateCreationProduit !== null && !$dateCreationProduit instanceof \DateTimeInterface) {
-            throw new \InvalidArgumentException('La date doit être une instance de DateTimeInterface.');
-        }
-
         $this->dateCreationProduit = $dateCreationProduit;
         return $this;
     }
@@ -142,11 +151,6 @@ class Produit
 
     public function setDateModificationProduit(?\DateTimeInterface $dateModificationProduit): self
     {
-        // Vérifiez que la date est bien un objet DateTime ou DateTimeImmutable
-        if ($dateModificationProduit !== null && !$dateModificationProduit instanceof \DateTimeInterface) {
-            throw new \InvalidArgumentException('La date doit être une instance de DateTimeInterface.');
-        }
-
         $this->dateModificationProduit = $dateModificationProduit;
         return $this;
     }
@@ -161,6 +165,7 @@ class Produit
         $this->approved = $approved;
         return $this;
     }
+
     public function getImageFile(): ?File
     {
         return $this->imageFile;
@@ -183,14 +188,27 @@ class Produit
         return $this;
     }
 
-    public function getCommande(): ?Commande
+    /**
+     * @return Collection<int, Commande>
+     */
+    public function getCommandes(): Collection
     {
-        return $this->Commande;
+        return $this->commandes;
     }
 
-    public function setCommande(?Commande $Commande): self
+    public function addCommande(Commande $commande): self
     {
-        $this->Commande = $Commande;
+        if (!$this->commandes->contains($commande)) {
+            $this->commandes->add($commande);
+        }
+
+        return $this;
+    }
+
+    public function removeCommande(Commande $commande): self
+    {
+        $this->commandes->removeElement($commande);
+
         return $this;
     }
 }

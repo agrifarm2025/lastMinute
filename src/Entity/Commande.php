@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 class Commande
@@ -22,16 +23,20 @@ class Commande
     #[ORM\Column]
     private ?int $prix = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $typeCommande = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: "La type commande est obligatoire.")]
+    private string $typeCommande;
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[Assert\Length(min: 5,max:100, minMessage: "La description doit contenir au moins 5 caractères.")]
     private ?string $adress = null;
 
-    #[ORM\Column(type: Types::SIMPLE_ARRAY)]
+    #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true)]
+    #[Assert\NotBlank(message: "Le paiement est obligatoire.")]
     private array $paiment = [];
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -40,7 +45,7 @@ class Commande
     /**
      * @var Collection<int, Produit>
      */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'Commande')]
+    #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'commandes')]
     private Collection $produits;
 
     public function __construct()
@@ -82,7 +87,7 @@ class Commande
         return $this->typeCommande;
     }
 
-    public function setTypeCommande(string $typeCommande): static
+    public function setTypeCommande(string $typeCommande): self
     {
         $this->typeCommande = $typeCommande;
 
@@ -118,7 +123,7 @@ class Commande
         return $this->paiment;
     }
 
-    public function setPaiment(array $paiment): static
+    public function setPaiment(array $paiment): self
     {
         $this->paiment = $paiment;
 
@@ -149,7 +154,8 @@ class Commande
     {
         if (!$this->produits->contains($produit)) {
             $this->produits->add($produit);
-            $produit->setCommande($this);
+            // Ensure reverse relationship is set
+            $produit->addCommande($this); // Add the command to the product
         }
 
         return $this;
@@ -158,10 +164,8 @@ class Commande
     public function removeProduit(Produit $produit): static
     {
         if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
-            if ($produit->getCommande() === $this) {
-                $produit->setCommande(null);
-            }
+            // If the produit is removed, remove the reverse relation
+            $produit->removeCommande($this);
         }
 
         return $this;

@@ -1,88 +1,54 @@
 <?php
+// src/Form/CommandeType.php
+namespace App\Form;
+// src/Form/CommandeType.php
 namespace App\Form;
 
 use App\Entity\Commande;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class CommandeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('quantite', NumberType::class, [
-                'constraints' => [
-                    new Assert\NotBlank(['message' => 'La quantité est obligatoire']),
-                    new Assert\Positive(['message' => 'La quantité doit être un nombre positif']),
-                ],
-                'attr' => ['class' => 'form-control']
-            ])
-            ->add('prix', NumberType::class, [
-                'constraints' => [
-                    new Assert\NotBlank(['message' => 'Le prix est obligatoire']),
-                    new Assert\Positive(['message' => 'Le prix doit être un nombre positif']),
-                ],
-                'attr' => ['class' => 'form-control']
+            ->add('adress', TextType::class, [
+                'label' => 'Adresse de livraison',
+                'required' => true,
             ])
             ->add('typeCommande', ChoiceType::class, [
+                'label' => 'Type de commande',
                 'choices' => [
-                    'Livraison' => 'livraison',
-                    'Retrait en magasin' => 'retrait',
+                    'Standard' => 'standard',
+                    'Express' => 'express',
+                    'Sur mesure' => 'custom',
                 ],
-                'constraints' => [
-                    new Assert\NotBlank(['message' => 'Le type de commande est obligatoire']),
-                ],
-                'attr' => ['class' => 'form-control']
-            ])
-            ->add('status', ChoiceType::class, [
-                'choices' => [
-                    'En attente' => 'en_attente',
-                    'Validée' => 'validee',
-                    'Annulée' => 'annulee',
-                ],
-                'constraints' => [
-                    new Assert\NotBlank(['message' => 'Le statut est obligatoire']),
-                ],
-                'attr' => ['class' => 'form-control']
-            ])
-            ->add('adress', TextType::class, [
-                'constraints' => [
-                    new Assert\NotBlank(['message' => 'L\'adresse est obligatoire']),
-                ],
-                'attr' => ['class' => 'form-control']
+                'required' => true,
             ])
             ->add('paiment', ChoiceType::class, [
+                'label' => 'Mode de paiement',
                 'choices' => [
-                    'Carte bancaire' => 'carte',
-                    'Espèces' => 'espece',
+                    'Carte de crédit' => 'credit_card',
                     'PayPal' => 'paypal',
+                    'Espèces' => 'cash',
                 ],
-                'expanded' => true,  // Affiche sous forme de boutons radio
-                'multiple' => true,  // Permet de choisir plusieurs options
-                'constraints' => [
-                    new Assert\NotBlank(['message' => 'Le mode de paiement est obligatoire']),
-                ],
-                'attr' => ['class' => 'form-control']
+                'multiple' => true, // Allow multiple selections
+                'expanded' => true, // Render as checkboxes
+                'required' => true,
             ])
-            
-            ->add('date_creation_commande', DateTimeType::class, [
-                'widget' => 'single_text',
-                
-                'attr' => ['class' => 'form-control']
-            ]);
+            // Add other fields as needed
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Commande::class,
+            'attr'=>['novalidate'=>'noavalidate'],
         ]);
     }
 }

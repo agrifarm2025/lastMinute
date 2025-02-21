@@ -1,0 +1,42 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+
+{% block n_page %}List soil <data value=""></data>{% endblock %}
+
+<div class="container-fluid bg-light bg-icon py-6">
+    <div class="container">
+        <div class="section-header text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
+            <h1 class="display-5 mb-3">Soil Data List</h1>
+        </div>
+        <div class="row g-4">
+            {% for f in soil %}
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="bg-white text-center h-100 p-4 p-xl-5">
+                        <img class="img-fluid mb-4" src="{{ asset('front/img/icon-1.png') }}" alt="">
+                        <h4 class="mb-3">{{ f.niveauPh }}</h4>
+                        <p class="mb-4"></p>
+                        <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('app_updateformsoil', {'id': f.id}) }}">Modify</a>
+                        <a class="btn btn-outline-danger border-2 py-2 px-4 rounded-pill" href="{{ path('delete_soil', {'id': f.id}) }}">Delete</a>
+                    </div>
+                </div>
+        
+            {% endfor %}
+             <!-- Display the "add" button when there are no soil records -->
+           
+
+                <!-- Display the "add" button when there are no soil records -->
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center cursor-pointer" 
+                         data-href="{{ path('app_soil_add', {'cropId': crop.id}) }}" 
+                         onclick="window.location.href=this.getAttribute('data-href')">
+                        <h1 class="text-white mb-0">+</h1>
+                    </div>
+                </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -50,12 +50,13 @@
                                 <h5 class="card-title">{{ produit.nom }}</h5>
                                 <p class="card-text">{{ produit.description }}</p>
                                 <p class="card-text"><strong>Prix:</strong> {{ produit.prix }} €</p>
+                                <p class="card-text"><strong>Quantité:</strong> {{ produit.quantite }} </p>
+
                             </div>
                         </div>
 
                         <!-- 🛒 Boutons -->
                         <div class="text-center mt-3">
-                            <a href="{{ path('commande_produit', {'id': produit.id}) }}" class="btn btn-success rounded-pill px-4 py-2">Commander</a>
                             <a href="{{ path('ajouter_au_panier', {'id': produit.id}) }}" class="btn btn-secondary rounded-pill px-4 py-2">
                                 <i class="fas fa-cart-plus"></i> Ajouter au panier
                             </a>

@@ -1,0 +1,56 @@
+{% extends 'base_back.html.twig' %}
+
+
+{% block body %}
+
+<div class="pagetitle">
+    <h1>List Soil Data</h1>
+    <nav>
+      <ol class="breadcrumb">
+        
+        <li class="breadcrumb-item active">List Soil Data</li>
+      </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Soil Data List</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">pH Level</th>
+                                <th scope="col">humidite</th>
+                                <th scope="col">niveau Nutriment</th>
+                                <th scope="col">type Sol</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in soil %}
+                                <tr>
+                                    <th scope="row">{{ loop.index }}</th>
+                                    <td>{{ f.niveauPh }}</td>
+                                    <td>{{ f.humidite }}</td>
+                                    <td>{{ f.niveauNutriment }}</td>
+                                    <td>{{ f.typeSol }}</td>
+
+                                    <td>
+                                        <a href="{{ path('app_updateformsoil', {'id': f.id}) }}" class="btn btn-primary btn-sm">Modify</a>
+                                        <a href="{{ path('delete_soil', {'id': f.id}) }}" class="btn btn-danger btn-sm">Delete</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                   
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

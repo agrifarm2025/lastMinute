@@ -1,0 +1,37 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+
+{% block n_page %}List crop{% endblock %}
+
+<div class="container-fluid bg-light bg-icon py-6">
+    <div class="container">
+        <div class="section-header text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
+            <h1 class="display-5 mb-3">crop List</h1>
+        </div>
+        <div class="row g-4">
+            {% for f in products %}
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="bg-white text-center h-100 p-4 p-xl-5">
+                        <img class="img-fluid mb-4" src="{{ asset('Front/img/icon-1.png')}}" alt="">
+                        <h4 class="mb-3">{{ f.cropevent }}</h4>
+                        <h4 class="mb-3">{{ f.typeCrop }}</h4>
+                        <p class="mb-4"></p>
+                        <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('app_crop_add', {'id': f.id}) }}">modify</a>
+                        <a class="btn btn-outline-danger border-2 py-2 px-4 rounded-pill" href="{{ path('delete_crop', {'id': f.id}) }}">Delete</a>
+                        <a href="{{ path('listcrop',{'id':f.id}) }}" class="btn btn-primary rounded-pill py-3 px-5">Go to Soil Data</a>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <!-- Add crop button -->
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center cursor-pointer" data-href="{{ path('app_crop_add') }}" onclick="window.location.href=this.getAttribute('data-href')">
+                    <h1 class="text-white mb-0">+</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
