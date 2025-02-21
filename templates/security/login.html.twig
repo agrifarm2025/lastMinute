@@ -26,6 +26,7 @@
                 </div><!-- End Logo -->
 
                 <div class="card mb-3">
+                        {% include 'flash.html.twig' %}
 
                     <div class="card-body">
 
@@ -62,7 +63,7 @@
                         >
 
                         <div class="col-12">
-                        <a href="pages-register.html">Mot de passe oublié?</a>
+                        <a href="{{path('forgotten_password')}}">Mot de passe oublié?</a>
                         </div>
 
                         <div class="col-12">
@@ -92,23 +93,23 @@
         </div>
         </main><!-- End #main -->
         <script>
-        
-    (function () {
-        'use strict';
+                
+            (function () {
+                'use strict';
 
-        var forms = document.querySelectorAll('.needs-validation');
+                var forms = document.querySelectorAll('.needs-validation');
 
-        Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-    })();
-</script>
+                Array.prototype.slice.call(forms).forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            })();
+        </script>
 
 {% endblock %}
 

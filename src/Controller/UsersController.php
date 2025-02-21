@@ -22,6 +22,7 @@ class UsersController extends AbstractController
     #[Route('/admin', name: 'app_admin')]
     public function admin(): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         return $this->render('/admin/admin.html.twig'
     );
     }
