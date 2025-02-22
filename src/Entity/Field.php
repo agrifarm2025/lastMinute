@@ -60,7 +60,8 @@ class Field
     #[Assert\Length(max: 255, maxMessage: "Description cannot exceed 255 characters")]
     private ?string $description = null;
 
-    
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Crop $Crop = null;
 
     public function __construct()
     {
@@ -194,6 +195,17 @@ class Field
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+    public function getCrop(): ?Crop
+    {
+        return $this->Crop;
+    }
+
+    public function setCrop(?Crop $Crop): static
+    {
+        $this->Crop = $Crop;
 
         return $this;
     }

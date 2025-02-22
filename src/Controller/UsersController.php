@@ -15,14 +15,14 @@ class UsersController extends AbstractController
     #[Route('/home', name: 'app_client')]
     public function index1(): Response
     {
-        return $this->render('/client/home.html.twig'
+        return $this->render('/base_front.html.twig'
     );
     }
 
     #[Route('/admin', name: 'app_admin')]
     public function admin(): Response
     {
-        return $this->render('/admin/admin.html.twig'
+        return $this->render('/base_back.html.twig'
     );
     }
 

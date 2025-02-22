@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Controller\ManagerRegistry;
+use App\Entity\Farm;
+use App\Entity\Field;
 use App\Entity\Soildata;
 use App\Form\SoildataType;
 use App\Repository\SoildataRepository;
@@ -18,13 +20,14 @@ use Symfony\Bridge\Doctrine\ManagerRegistry as DoctrineManagerRegistry;
 
 class CropController extends AbstractController
 {
-    #[Route('/crop/add', name: 'app_crop_add', methods: ['GET', 'POST'])]
-    public function add(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/crop/add/{id}', name: 'app_crop_add', methods: ['GET', 'POST'])]
+    public function add(Request $request, EntityManagerInterface $entityManager,$id): Response
     {
         $crop = new Crop();
         $form = $this->createForm(CropType::class, $crop);
         $form->handleRequest($request);
-    
+
+       
         if ($form->isSubmitted() && $form->isValid()) {
             // Persist the crop to the database
             $entityManager->persist($crop);
@@ -34,7 +37,7 @@ class CropController extends AbstractController
             $this->addFlash('success', 'Crop ajouté avec succès !');
     
             // Redirect to the crop affichage page
-            return $this->redirectToRoute('crop_affichage');
+            return $this->redirectToRoute('field', ['id' => $id]);
         }
     
         // Render the form if it's not submitted or invalid
@@ -80,10 +83,10 @@ public function updateformcrop(Request $request, EntityManagerInterface $entityM
     }
 
     
-    #[Route("/crop/affichage", name:"crop_affichage")]
-    public function affichage(CropRepository $em): Response
+    #[Route("/crop/affichage/{id}", name:"crop_affichage")]
+    public function affichage(CropRepository $em,$id): Response
 {
-    $crops = $em->findAll();
+    $crops = $em->find($id);
     return $this->render('crop/affichage.html.twig', [ // Fixed template name
         'products' => $crops,
     ]);
