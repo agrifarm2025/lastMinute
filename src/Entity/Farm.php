@@ -72,6 +72,14 @@ class Farm
     
         #[ORM\Column]
         private ?bool $cabin = null;
+
+        #[ORM\Column]
+        private ?float $lon = null;
+
+        #[ORM\Column]
+        private ?float $lat = null;
+
+        
     
      
     
@@ -269,4 +277,30 @@ class Farm
 
         return $this;
     }
+
+    public function getLon(): ?float
+    {
+        return $this->lon;
+    }
+
+    public function setLon(float $lon): static
+    {
+        $this->lon = $lon;
+
+        return $this;
+    }
+
+    public function getLat(): ?float
+    {
+        return $this->lat;
+    }
+
+    public function setLat(float $lat): static
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    
 }
