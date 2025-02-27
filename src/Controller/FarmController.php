@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Farm;
+use App\Entity\Field;
+use App\Entity\Task;
 use App\Form\FarmType;
 use App\Repository\FarmRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -14,21 +16,42 @@ use Symfony\Component\Routing\Attribute\Route;
 final class FarmController extends AbstractController
 {
     #[Route('/farm', name: 'farm')]
-    public function farm(ManagerRegistry $m,Request $req): Response
+    public function farm(ManagerRegistry $m, Request $req): Response
     {  
         $em = $m->getManager();  
         $farm = new Farm();  
-        $form=$this->createForm(FarmType::class,$farm);
+        $form = $this->createForm(FarmType::class, $farm);
         $form->handleRequest($req);
-        if($form->isSubmitted() && $form->isValid()){
-        $em->persist($farm);  
-        $em->flush();  
-        return $this->redirectToRoute('farmtab');
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($farm);
+
+            // Creating a field associated with the farm
+            $field = new Field();
+            $field->autoField(
+                1000.0, // surface
+                'Main Field', // name
+                $farm, // farm
+                5000.0, // budget
+                0.0, // income
+                0.0, // outcome
+                0.0, // profit
+                'farm chores', // description
+                null // crop
+            );
+    
+            $em->persist($field);
+    
+            //$this->water($field, $em, $farm);
+            $em->flush();
+            return $this->redirectToRoute('farmtab');
         }
+
         return $this->render("front/farm/farmcreate.html.twig",[
-            'form'=>$form
+            'form' => $form->createView()
         ]);  
     }  
+
     #[Route('/farmtab', name: 'farmtab')]
     public function farmdisplay(FarmRepository $farm)
     {

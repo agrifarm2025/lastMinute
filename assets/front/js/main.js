@@ -1,7 +1,11 @@
 (function ($) {
     "use strict";
 
-    // Spinner
+    var myCarousel = new bootstrap.Carousel(document.querySelector('#header-carousel'), {
+        interval: 3000,  // Set the slide duration in milliseconds (3 seconds)
+        ride: 'carousel'
+    });
+
     var spinner = function () {
         setTimeout(function () {
             if ($('#spinner').length > 0) {

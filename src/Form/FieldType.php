@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Crop;
 use App\Entity\farm;
 use App\Entity\Field;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -25,11 +24,7 @@ class FieldType extends AbstractType
         ->add('budget', NumberType::class, ['label' => 'Budget'])
         ->add('description', TextType::class, ['label' => 'Description'])
         
-        ->add('crop', EntityType::class, [
-            'class' => Crop::class,
-            'choice_label' => 'type_crop', // Does this field exist in Crop?
-            'placeholder' => 'Select a Crop',
-        ])
+
         
            
             ->add('create', SubmitType::class, [

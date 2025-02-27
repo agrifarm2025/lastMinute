@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Field;
 use App\Entity\Task;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,9 +15,6 @@ class TaskRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Task::class);
     }
-   
-
-
 
 //    /**
 //     * @return Task[] Returns an array of Task objects

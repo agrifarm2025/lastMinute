@@ -50,7 +50,7 @@ public function addsoil(Request $request, EntityManagerInterface $em, int $cropI
     $soil = new Soildata();
     $soil->setCrop($crop); 
     
-    $form = $this->createForm(SoildataType::class, $soil);
+    $form = $this->createForm(Soildata::class, $soil);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {

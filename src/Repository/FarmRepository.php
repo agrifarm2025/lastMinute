@@ -22,7 +22,7 @@ class FarmRepository extends ServiceEntityRepository
                 'SELECT  b 
                  FROM App\Entity\Farm a 
                  INNER JOIN App\Entity\Field b 
-                 WITH a.id = b.farm 
+                 WITH a.id = b.Farm 
                  WHERE a.id = :id'
             )
             ->setParameter('id', $id)

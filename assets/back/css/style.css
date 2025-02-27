@@ -16,12 +16,8 @@ body {
   font-family: "Open Sans", sans-serif;
   background: #f6f9ff;
   color: #444444;
-  padding-top: 80px;
 }
-.container {
-  position: relative;
-  z-index: 1;
-}
+
 a {
   color: #4154f1;
   text-decoration: none;

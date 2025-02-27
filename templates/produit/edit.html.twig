@@ -1,0 +1,74 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Marketplace</h1>
+        <div class="row justify-content-center">
+            {% for produit in produit %}
+                <div class="col-md-4 mb-4 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="card shadow-sm p-4">
+                        {% if produit.imageFileName %}
+                            <img src="{{ asset('uploads/images/' ~ produit.imageFileName) }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <span class="text-muted">Aucune image</span>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ produit.nom }}</h5>
+                            <p class="card-text">{{ produit.description }}</p>
+                            <p class="card-text"><strong>Prix:</strong> {{ produit.prix }} €</p>
+                            <p class="card-text"><strong>Quantité:</strong> {{ produit.quantite }}</p>
+                            
+                            <div class="text-center mt-3">
+                                <a href="{{ path('produit_edit', {'id': produit.id}) }}" class="btn btn-warning rounded-pill px-4">Modifier</a>
+                                <a href="{{ path('produit_delete', {'id': produit.id}) }}" class="btn btn-danger rounded-pill px-4" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-center">Aucun produit à modifier.</p>
+            {% endfor %}
+        </div>
+
+        <div class="card shadow-lg p-4 mt-5">
+            <h1 class="text-center text-primary mb-4">Modifier le Produit</h1>
+            
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                <div class="form-group mb-3">
+                    {{ form_row(form.nom, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group mb-3">
+                    {% if produit.imageFileName %}
+                        <img src="{{ asset('uploads/images/' ~ produit.imageFileName) }}" class="img-fluid mb-3" alt="Image actuelle">
+                    {% endif %}
+                    {{ form_row(form.imageFile, {'attr': {'class': 'form-control-file'}}) }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form_row(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            {{ form_row(form.prix, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            {{ form_row(form.quantite, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.5s">
+                    <button type="submit" class="btn btn-primary rounded-pill py-3 px-5">Enregistrer</button>
+                </div>
+                
+            {{ form_end(form) }}
+            <div class="text-center mt-3">
+                <a href="{{ path('marketplace') }}" class="btn btn-secondary">Retour</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

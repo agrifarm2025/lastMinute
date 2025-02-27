@@ -1,0 +1,73 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Market Approuvés</h1>
+
+        {# 🔥 Panier en haut à droite 🔥 #}
+        <div class="d-flex justify-content-end mb-3 position-relative">
+            <a href="{{ path('afficher_panier') }}" class="btn btn-outline-dark position-relative">
+                <i class="fas fa-shopping-cart"></i> Mon Panier
+                {% if panier is defined and panier|length > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ panier|length }}
+                    </span>
+                {% endif %}
+            </a>
+        </div>
+
+        {# 🔎 Barre de recherche #}
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <form action="{{ path('recherche_produit') }}" method="GET" class="form-inline">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control" placeholder="Rechercher un produit..." value="{{ app.request.query.get('q') }}">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {# 📦 Affichage des produits approuvés #}
+        <div class="row justify-content-center">
+            {% for produit in produits %}
+                {% if produit.approved %}
+                    <div class="col-md-4 mb-4 wow fadeInUp" data-wow-delay="0.5s">
+                        <div class="card shadow-sm p-4">
+                            {% if produit.imageFileName %}
+                                <img src="{{ asset('uploads/images/' ~ produit.imageFileName) }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <span class="text-muted">Aucune image</span>
+                                </div>
+                            {% endif %}
+
+                            <div class="card-body">
+                                <h5 class="card-title">{{ produit.nom }}</h5>
+                                <p class="card-text">{{ produit.description }}</p>
+                                <p class="card-text"><strong>Prix:</strong> {{ produit.prix }} €</p>
+                                <p class="card-text"><strong>Quantité:</strong> {{ produit.quantite }} </p>
+
+                            </div>
+                        </div>
+
+                        <!-- 🛒 Boutons -->
+                        <div class="text-center mt-3">
+                            <a href="{{ path('ajouter_au_panier', {'id': produit.id}) }}" class="btn btn-secondary rounded-pill px-4 py-2">
+                                <i class="fas fa-cart-plus"></i> Ajouter au panier
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="col-12">
+                    <p class="text-center">Aucun produit approuvé disponible pour le moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

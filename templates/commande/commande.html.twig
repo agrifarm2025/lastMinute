@@ -1,0 +1,66 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">🛒 Valider votre commande</h1>
+
+        <div class="card p-4">
+            {{ form_start(form) }}
+            
+            <!-- Address Section -->
+            <div class="form-group mb-4">
+                <label for="address">Adresse de Livraison</label>
+                {{ form_widget(form.adress, { 'attr': {'class': 'form-control', 'placeholder': 'Entrez votre adresse'} }) }}
+                <div class="text-danger">
+                    {{ form_errors(form.adress) }}
+                </div>
+            </div>
+
+            <!-- Type de Commande Section -->
+            <div class="form-group mb-4">
+                <label for="typeCommande">Type de Commande</label>
+                {{ form_widget(form.typeCommande, { 'attr': {'class': 'form-control'} }) }}
+                <div class="text-danger">
+                    {{ form_errors(form.typeCommande) }}
+                </div>
+            </div>
+
+            <!-- Payment Section -->
+            <div class="form-group mb-4">
+                <label for="payment">Mode de Paiement</label>
+                {{ form_widget(form.paiment, { 'attr': {'class': 'form-control'} }) }}
+                <div class="text-danger">
+                    {{ form_errors(form.paiment) }}
+                </div>
+            </div>
+            
+            <!-- Cart Products Section -->
+            <h3 class="mt-4">🛍 Produits dans votre panier :</h3>
+            {% if produitsCommande is not empty %}
+                <ul class="list-group mb-4">
+                    {% for item in produitsCommande %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ item.produit.nom }} 
+                            <span class="badge badge-secondary">Quantité : {{ item.quantite }}</span>
+                            <span class="badge badge-primary">Total : {{ item.prixTotal }} €</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Votre panier est vide.</p>
+            {% endif %}
+
+            <!-- Order Total Section -->
+            <div class="text-right mb-4">
+                <h4>Total de la commande : <strong>{{ total }} €</strong></h4>
+            </div>
+
+            <!-- Submit Button Section -->
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-success btn-lg">Confirmer la commande</button>
+            </div>
+            
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

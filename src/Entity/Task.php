@@ -70,7 +70,40 @@ class Task
         #[ORM\Column(type: 'decimal', precision: 10, scale: 2, nullable: true)]
         #[Assert\PositiveOrZero(message: "Payment must be a positive number or zero")]
         private ?float $payment_worker = null;
+        public function __construct(){
+            
+        }
+        public function autoTask(
+            string $name,
+            string $description,
+            string $status,
+            \DateTimeInterface $date,
+            string $ressource,
+            string $responsable,
+            ?Field $field,
+            string $priority,
+            string $estimated_duration,
+            \DateTimeInterface $deadline,
+            int $workers,
+            ?\DateTimeInterface $last_updated,
+            ?float $payment_worker
+        ) {
+            $this->name = $name;
+            $this->description = $description;
+            $this->status = $status;
+            $this->date = $date;
+            $this->ressource = $ressource;
+            $this->responsable = $responsable;
+            $this->field = $field;
+            $this->priority = $priority;
+            $this->estimated_duration = $estimated_duration;
+            $this->deadline = $deadline;
+            $this->workers = $workers;
+            $this->last_updated = $last_updated;
+            $this->payment_worker = $payment_worker;
     
+            $this->setTotal();
+        }
         /**
          * Custom validation for deadline to be higher than date.
          */

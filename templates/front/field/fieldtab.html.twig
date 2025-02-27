@@ -1,4 +1,4 @@
-{% extends 'front/base-front.html.twig' %}
+{% extends 'base_front.html.twig' %}
 {% block n_page %}Farm{% endblock %}
 
 {% block body %}
@@ -27,7 +27,7 @@
         </div>
         <div class="row g-4 justify-content-center">
             {% for f in fields %}
-            
+           
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                
                 <div class="bg-white  h-100 p-4 p-xl-5 position-relative">
@@ -39,25 +39,31 @@
                     <!-- Card Content -->
                     <img class="img-fluid mb-4 d-block mx-auto" src="{{ asset('front/img/icon-1.png')}}" alt="">
                     <h4 class="mb-3 text-center">{{ f.name }}</h4>
+                    <p class="mb-4 text-center" style="width: 100%; background-color: #155f25; padding: 10px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                        <strong style="color: white; font-size: 1.2rem; letter-spacing: 1px; text-transform: uppercase;">
+                            {{ f.crop.getTypeCrop() ?? "farm specific" }}                        </strong>
+                    </p>
+                    
                     <p class="mb-4"><strong>Surface: </strong>{{f.surface}}</p>
                     <p class="mb-4"><strong>budget: </strong>{{f.budget}}dt</p>
                     <p class="mb-4"><strong>income: </strong>{{f.income}}dt</p>
                     <p class="mb-4"><strong>outcome: </strong>{{f.outcome}}dt</p>
                     <p class="mb-4"><strong>profit: </strong>{{f.profit}}dt</p>
 
-                    <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('task', {'id': f.id}) }}">Show details</a>
+                    <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('services', {'id': f.id}) }}">Show details</a>
                     <a class="btn btn-outline-secondary border-2 py-2 px-4 rounded-pill" href="{{ path('field_update', {'id': f.id}) }}">Modify</a>
                 </div>
             </div>
+
             {% endfor %}
 
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center cursor-pointer" data-href="{{ path('field',{'id':farm.id}) }}" onclick="window.location.href=this.getAttribute('data-href')">
+                <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center cursor-pointer" data-href="{{ path('app_crop_add',{'id':farm.id}) }}" onclick="window.location.href=this.getAttribute('data-href')">
                     <h1 class="text-white mb-0">+</h1>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+322
 {% endblock %}

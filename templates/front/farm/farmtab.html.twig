@@ -1,4 +1,4 @@
-{% extends 'front/base-front.html.twig' %}
+{% extends 'base_front.html.twig' %}
 {% block n_page %}Farm{% endblock %}
 
 {% block body %}
@@ -40,7 +40,7 @@
 
                     <p class="mb-4">{{f.description}}</p>
 
-                    <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{path('services',{'id':f.id})}}">Show details</a>
+                    <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{path('list',{'id':f.id})}}">Show details</a>
                     <a class="btn btn-outline-secondary border-2 py-2 px-4 rounded-pill" href="{{path('farm_update',{'id':f.id})}}" >Modify</a>
                 </div>
             </div>
