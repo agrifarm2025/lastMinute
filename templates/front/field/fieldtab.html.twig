@@ -27,6 +27,7 @@
         </div>
         <div class="row g-4 justify-content-center">
             {% for f in fields %}
+           
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                
                 <div class="bg-white  h-100 p-4 p-xl-5 position-relative">
@@ -40,8 +41,7 @@
                     <h4 class="mb-3 text-center">{{ f.name }}</h4>
                     <p class="mb-4 text-center" style="width: 100%; background-color: #155f25; padding: 10px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                         <strong style="color: white; font-size: 1.2rem; letter-spacing: 1px; text-transform: uppercase;">
-                            {{ f.crop.getTypeCrop() }}
-                        </strong>
+                            {{ f.crop.getTypeCrop() ?? "farm specific" }}                        </strong>
                     </p>
                     
                     <p class="mb-4"><strong>Surface: </strong>{{f.surface}}</p>
@@ -54,6 +54,7 @@
                     <a class="btn btn-outline-secondary border-2 py-2 px-4 rounded-pill" href="{{ path('field_update', {'id': f.id}) }}">Modify</a>
                 </div>
             </div>
+
             {% endfor %}
 
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
@@ -64,5 +65,5 @@
         </div>
     </div>
 </div>
-
+322
 {% endblock %}
