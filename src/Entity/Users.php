@@ -62,11 +62,14 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $is_verified = false;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $imageFileName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $google_id = null;
 
     
     public function __construct()
@@ -217,6 +220,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setImageFileName(?string $imageFileName): static
     {
         $this->imageFileName = $imageFileName;
+
+        return $this;
+    }
+
+    public function getGoogleId(): ?string
+    {
+        return $this->google_id;
+    }
+
+    public function setGoogleId(?string $google_id): static
+    {
+        $this->google_id = $google_id;
 
         return $this;
     }

@@ -2,25 +2,33 @@
 
 namespace App\Controller;
 
-use App\Form\ResetPasswordFormType;
-use App\Form\RestPasswordRequestFormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Repository\UsersRepository;
 use App\Service\SendMailService;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use App\Form\ResetPasswordFormType;
+use App\Repository\UsersRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
+use App\Form\RestPasswordRequestFormType;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 
 
 
 class SecurityController extends AbstractController
 {
+
+    public const SCOPES = [
+        'google' => [],
+    ];
+
+
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -44,6 +52,26 @@ class SecurityController extends AbstractController
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
+
+
+    #[Route("/oauth/connect/{service}", name: 'auth_oauth_connect', methods: ['GET'])]
+    public function connect(string $service, ClientRegistry $clientRegistry): RedirectResponse
+    {
+        if (! in_array($service, array_keys(self::SCOPES), true)) {
+            throw $this->createNotFoundException();
+        }
+
+        return $clientRegistry
+            ->getClient($service)
+            ->redirect(self::SCOPES[$service]);
+    }
+
+    #[Route('/oauth/check/{service}', name: 'auth_oauth_check', methods: ['GET', 'POST'])]
+    public function check(): Response
+    {
+        return new Response(status: 200);
+    }
+    
 
     #[Route('/forgottenpassword', name:'forgotten_password')]
     public function forgottenPassword(Request $request,UsersRepository $usersRepository,TokenGeneratorInterface $tokenGenerator, EntityManagerInterface $entityManager,SendMailService $mail){
