@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\Farm;
@@ -11,11 +10,81 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
+use App\Service\WeatherService;
+use App\Controller\WeatherController;
 
-final class FarmController extends AbstractController
+class FarmController extends AbstractController
 {
-    #[Route('/farm', name: 'farm')]
+    private $weatherService;
+    private $weatherController;
+
+    public function __construct(WeatherService $weatherService, WeatherController $weatherController)
+    {
+        $this->weatherService = $weatherService;
+        $this->weatherController = $weatherController;
+    }
+
+    #[Route('/list/{id}', name: 'list')]
+    public function show_fields(FarmRepository $farms, $id,ManagerRegistry $m)
+    {
+        $farm = $farms->find($id);
+        $fields = $farms->getFieldJoin($farm);
+        $em = $m->getManager();
+        $lat = $farm->getLat();
+        $lon = $farm->getLon();
+
+        $forecast = $this->weatherService->getForecastByCoordinates($lat, $lon);
+        
+
+        $weather = $forecast['list'][0]['weather'];
+        $description = $forecast['list'][0]['weather'][0]['description'];
+        $temperature = $forecast['list'][0]['main']['temp'];
+        $farm->setWeather($description);
+        $em->persist($farm);
+        $em->flush();
+        $zone="Not Found";
+        $aezData = [
+            ["id" => "001", "name" => "Kroumirie - Mogods", "lat_min" => 36.0, "lat_max" => 37.5, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "002", "name" => "Sub-humid", "lat_min" => 35.0, "lat_max" => 36.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "003", "name" => "Semiarid fresh winter", "lat_min" => 34.0, "lat_max" => 35.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "004", "name" => "North East and Cap Bon (semi arid with mild winters)", "lat_min" => 33.0, "lat_max" => 34.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "006", "name" => "Lower Steppe (arid with mild winters)", "lat_min" => 32.0, "lat_max" => 33.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "012", "name" => "Dorsal and Tell (Kairouan)", "lat_min" => 31.0, "lat_max" => 32.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "013", "name" => "Bean", "lat_min" => 30.0, "lat_max" => 31.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "014", "name" => "Féverole", "lat_min" => 29.0, "lat_max" => 30.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "015", "name" => "Upper semi-arid", "lat_min" => 28.0, "lat_max" => 29.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "016", "name" => "Sidi Bouzid", "lat_min" => 27.0, "lat_max" => 28.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "017", "name" => "Sub-wet and semi arid", "lat_min" => 26.0, "lat_max" => 27.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "018", "name" => "Irrigated areas in the North", "lat_min" => 25.0, "lat_max" => 26.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "019", "name" => "Hot zone with mild winters", "lat_min" => 24.0, "lat_max" => 25.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "020", "name" => "Irrigated areas of Cap Bon and Central", "lat_min" => 23.0, "lat_max" => 24.0, "lon_min" => 8.0, "lon_max" => 11.5],
+            ["id" => "021", "name" => "Irrigated areas in central and Cap Bon", "lat_min" => 22.0, "lat_max" => 23.0, "lon_min" => 8.0, "lon_max" => 11.5]
+        ];
+                foreach ($aezData as $aez) {
+            if ($lat >= $aez['lat_min'] && $lat <= $aez['lat_max'] && $lon >= $aez['lon_min'] && $lon <= $aez['lon_max']) {
+                $zone= $aez['id'];
+            }
+            
+        }
+    
+
+
+
+        
+        $warning = $this->weatherController->checkForCatastrophicWeather($forecast);
+
+        return $this->render('front/field/fieldtab.html.twig', [
+            'zone' => $zone,
+            'farm' => $farm,
+            'fields' => $fields,
+            'description' => $description,
+            'temperature' => $temperature,
+            'warning' => $warning ?? null,
+            'weather'=>$weather[0]
+        ]);
+    }
+       #[Route('/farm', name: 'farm')]
     public function farm(ManagerRegistry $m, Request $req): Response
     {  
         $em = $m->getManager();  
@@ -63,16 +132,7 @@ final class FarmController extends AbstractController
 
 
     }
-    #[Route('/list/{id}', name: 'list')]  
-    public function show_books(FarmRepository $farms,$id)  
-{  
-    $farm=$farms->find($id);
-    $fields=$farms->getFieldJoin($farm);
-    
-    return $this->render('front/field/fieldtab.html.twig', [  
-        'farm'=>$farm ,'fields'=>$fields
-    ]);  
-}  
+   
 #[Route('/deletefarm/{id}', name: 'delete_farm')]  
     public function deletefarm(FarmRepository $rep,ManagerRegistry $m,$id) // Use ManagerRegistry here  
     {  

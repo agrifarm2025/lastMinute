@@ -180,11 +180,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let marker;
 
 function extractZoneName(displayName) {
-      // The display_name typically includes city, state, country, etc.
-      // Example: "London, Greater London, England, United Kingdom"
-      const parts = displayName.split(',').map(part => part.trim());
-      return parts.slice(0, 2).join(', '); // Return city and country
-    }
+    // The display_name typically includes city, state, country, etc.
+    // Example: "London, Greater London, England, United Kingdom"
+    const parts = displayName.split(',').map(part => part.trim());
+    return parts[0]; // Return only the city name
+}
 
 // Function to search for a place using Nominatim API
 function searchLocation(query) {
