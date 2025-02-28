@@ -13,18 +13,79 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\WeatherService;
 use App\Controller\WeatherController;
+use Twilio\Rest\Client;
+
 
 class FarmController extends AbstractController
 {
     private $weatherService;
     private $weatherController;
+    private $twilioClient;
 
-    public function __construct(WeatherService $weatherService, WeatherController $weatherController)
+    public function __construct(WeatherService $weatherService, WeatherController $weatherController,Client $twilioClient)
     {
         $this->weatherService = $weatherService;
         $this->weatherController = $weatherController;
-    }
+        $this->twilioClient = $twilioClient;
 
+    }
+    public function sendSms($farm)
+    {
+
+        try {
+            $message = $this->twilioClient->messages->create(
+                '+21655771406', // to
+                [
+                    'from' => '+14347710556',
+                    'body' => 'Alert from Farming Assistant: Catastrophic weather detected - '. $farm->getWeather(),
+                ]
+            );
+
+        
+        } catch (\Exception $e) {
+            return new Response('Failed to send SMS: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    public function postpone($fields, $em)
+    {
+        foreach ($fields as $field) {
+            $tasks = $field->getTasks();
+            foreach ($tasks as $task) {
+                $task->setDate($task->getDate()->modify('+3 day'));
+                $task->setDeadline($task->getDeadline()->modify('+3 day'));
+                $em->persist($task);
+            }
+    
+            if ($field->getName() == 'Main Field') {
+                $soilTreatmentTask = new Task();
+                $soilTreatmentTask->autoTask(
+                    'Soil Treatment',
+                    'Soil treatment after rain',
+                    'to do',
+                    new \DateTime('tomorrow'),
+                    'farm',
+                    'John Doe', // Example responsible person
+                    $field,
+                    'high',
+                    '3 days',
+                    new \DateTime('tomorrow + 3 days'),
+                    5, // Example number of workers
+                    new \DateTime('now'),
+                    100.0 // Example payment per worker
+                );
+                $field->addTask($soilTreatmentTask);
+
+                $em->persist($soilTreatmentTask);
+                $em->persist($field);
+
+
+            }
+    
+            $em->persist($field);
+        }
+    
+        $em->flush();
+    }
     #[Route('/list/{id}', name: 'list')]
     public function show_fields(FarmRepository $farms, $id,ManagerRegistry $m)
     {
@@ -34,7 +95,7 @@ class FarmController extends AbstractController
         $lat = $farm->getLat();
         $lon = $farm->getLon();
 
-        $forecast = $this->weatherService->getForecastByCoordinates($lat, $lon);
+        $forecast = $this->weatherService->getForecastByCoordinates(4, 50);
         
 
         $weather = $forecast['list'][0]['weather'];
@@ -68,12 +129,11 @@ class FarmController extends AbstractController
             
         }
     
-
-
-
-        
         $warning = $this->weatherController->checkForCatastrophicWeather($forecast);
-
+        if ($warning) {
+            $this->sendSms($farm);
+            $this->postpone($fields, $em);
+        }
         return $this->render('front/field/fieldtab.html.twig', [
             'zone' => $zone,
             'farm' => $farm,

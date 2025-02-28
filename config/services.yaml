@@ -27,5 +27,10 @@ services:
         arguments:
             $apiKey: '%openweathermap.api_key%'
             $apiEndpoint: '%openweathermap.api_endpoint%'
+
+    Twilio\Rest\Client:
+        arguments:
+            - '%env(TWILIO_SID)%'
+            - '%env(TWILIO_TOKEN)%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
