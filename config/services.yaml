@@ -7,6 +7,7 @@
 parameters:
     images_directory: '%kernel.project_dir%/public/uploads/images'
     app.jwtsecret: '%env(JWT_SECRET)%'
+    photo_dir: "%kernel.project_dir%/public/uploads/images"
 services:
     # default configuration for services in *this* file
     _defaults:

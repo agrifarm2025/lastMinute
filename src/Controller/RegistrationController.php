@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager,SendMailService $mail, JWTService $jwt,#[Autowire('%images_directory%')]string $images_directory): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager,SendMailService $mail, JWTService $jwt,#[Autowire('%photo_dir%')]string $photoDir): Response
     {
         $user = new Users();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -30,7 +30,7 @@ class RegistrationController extends AbstractController
             // recuperer le donner de image 
             if($photo = $form['photo']->getData()){
                 $fileName = uniqid().'.'.$photo->guessExtension();
-                $photo->move($images_directory,$fileName) ;
+                $photo->move($photoDir,$fileName) ;
             }
             $user->setImageFileName($fileName);
             

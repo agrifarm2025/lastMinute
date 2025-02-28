@@ -42,6 +42,36 @@ class UsersRepository extends ServiceEntityRepository implements PasswordUpgrade
         ->getResult();
 }
 
+public function add(Users $user, bool $flush = false): void
+{
+    $this->getEntityManager()->persist($user);
+
+    if ($flush) {
+        $this->getEntityManager()->flush();
+    }
+}
+
+public function findByGoogleIdOrEmail(?string $googleId, string $email): ?Users
+{
+    return $this->createQueryBuilder('u')
+        ->where('u.google_id = :googleId OR u.email = :email')
+        ->setParameter('googleId', $googleId)
+        ->setParameter('email', $email)
+        ->getQuery()
+        ->getOneOrNullResult();
+}
+
+public function save(Users $user, bool $flush = true): void
+{
+    $entityManager = $this->getEntityManager(); // Get the entity manager
+    $entityManager->persist($user);
+
+    if ($flush) {
+        $entityManager->flush();
+    }
+}
+
+
 
 
     //    /**
