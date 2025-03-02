@@ -95,7 +95,7 @@ class FarmController extends AbstractController
         $lat = $farm->getLat();
         $lon = $farm->getLon();
 
-        $forecast = $this->weatherService->getForecastByCoordinates(4, 50);
+        $forecast = $this->weatherService->getForecastByCoordinates($lat, $lon);
         
 
         $weather = $forecast['list'][0]['weather'];

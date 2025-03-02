@@ -64,7 +64,7 @@
         </div>
         <div class="temperature-card" data-href="{{ path('weather', {'lon': farm.lon, 'lat': farm.lat}) }}" onclick="window.location.href=this.getAttribute('data-href')">
             <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="{{ weather.description }}" class="mb-3">
-        
+            
             <h4>Temperature</h4>
             <p>{{ temperature }}°C</p>
             <p>{{ description }}</p>
