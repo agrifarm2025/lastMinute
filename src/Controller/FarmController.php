@@ -144,7 +144,7 @@ class FarmController extends AbstractController
             'weather'=>$weather[0]
         ]);
     }
-       #[Route('/farm', name: 'farm')]
+    #[Route('/farm', name: 'farm')]
     public function farm(ManagerRegistry $m, Request $req): Response
     {  
         $em = $m->getManager();  
