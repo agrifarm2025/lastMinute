@@ -1,0 +1,50 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+
+{% block n_page %}List crop{% endblock %}
+
+<!-- Search Bar -->
+<form method="get" action="{{ path('recherche_crop') }}" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Search by Type or Event..." value="{{ app.request.query.get('search') }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<!-- Buttons Section - Centered -->
+<div class="text-center mb-4">
+    <a href="{{ path('crop_calendar') }}" class="btn btn-success rounded-pill py-3 px-5 mx-2">
+        View Crop Calendar
+    </a>
+    <a href="{{ path('crop_Info') }}" class="btn btn-info rounded-pill py-3 px-5 mx-2">
+        View Crop Info
+    </a>
+</div>
+
+<!-- Crop List -->
+<div class="row g-4">
+    {% for f in crop %}
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="bg-white text-center h-100 p-4 p-xl-5">
+                <img class="img-fluid mb-4" src="{{ asset('Front/img/icon-1.png')}}" alt="">
+                <p class="mb-4"><strong>Crop Event: </strong>{{ f.cropevent }}</p>           
+                <p class="mb-4"><strong>Crop Type: </strong>{{ f.typeCrop }}</p>
+
+                <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('app_updateformcrop', {'id': f.id}) }}">Modify</a>
+                <a class="btn btn-outline-danger border-2 py-2 px-4 rounded-pill" href="{{ path('delete_crop', {'id': f.id}) }}">Delete</a>
+                <a href="{{ path('soildata_affichage', {'id': f.id}) }}" class="btn btn-primary rounded-pill py-3 px-5">Go to Soil Data</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Add Crop Button -->
+<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center cursor-pointer" onclick="window.location.href='{{ path('app_crop_add') }}'">
+        <h1 class="text-white mb-0">+</h1>
+    </div>
+</div>
+
+{% endblock %}
+

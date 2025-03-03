@@ -1,0 +1,59 @@
+{% extends 'base_back.html.twig' %}
+{% block body %}
+
+
+
+<div class="pagetitle">
+    <h1>List Crop</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-item active">List Crop</li>
+      </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Crop List <span>| Overview</span></h5>
+
+        <table class="table table-borderless datatable">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Crop Event</th>
+                    <th scope="col">Type of Crop</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in crops %}
+                    <tr>
+                        <th scope="row">#{{ loop.index }}</th>
+                        <td>{{ f.cropevent }}</td>
+                        <td>{{ f.typecrop }}</td>
+                        <td>{{ f.methodeCrop }}</td>
+                        
+
+
+
+                        
+                        <td>
+                            <a href="{{ path('app_crop_add', {'id': f.id}) }}" class="btn btn-primary btn-sm">Modify</a>
+                            <a href="{{ path('delete_crop', {'id': f.id}) }}" class="btn btn-danger btn-sm">Delete</a>
+                            <a href="{{ path('list', {'id': f.id}) }}" class="btn btn-success btn-sm">Go to Soil Data</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="text-center mt-3">
+            <a href="{{ path('app_crop_add') }}" class="btn btn-primary">+ Add Crop</a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

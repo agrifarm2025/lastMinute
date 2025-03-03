@@ -1,0 +1,46 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="text-center mb-5">Leave a Comment</h1>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        {{ form_start(form) }}
+
+                        <!-- Rating Section -->
+                        <div class="form-group mb-4">
+                            <label for="{{ form.rate.vars.id }}" class="form-label">Rate</label>
+                            {{ form_widget(form.rate, {'attr': {'class': 'form-control'}}) }}
+                            {% if form.rate.vars.errors %}
+                                <div class="text-danger">
+                                    {{ form_errors(form.rate) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Comment Section -->
+                        <div class="form-group mb-4">
+                            <label for="{{ form.commentaire.vars.id }}" class="form-label">Your Comment</label>
+                            {{ form_widget(form.commentaire, {'attr': {'class': 'form-control', 'placeholder': 'Write your comment here...', 'rows': 4}}) }}
+                            {% if form.commentaire.vars.errors %}
+                                <div class="text-danger">
+                                    {{ form_errors(form.commentaire) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" class="btn btn-success btn-lg">Submit</button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

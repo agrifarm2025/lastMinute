@@ -1,0 +1,80 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Crop Information - Tunisia{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center mt-4">FAO Crop Information - Tunisia</h1>
+
+        {% if error is not null %}
+            <div class="alert alert-danger">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        {% elseif pagination is empty %}
+            <div class="alert alert-warning text-center">
+                No crop information available.
+            </div>
+        {% else %}
+            <div id="cropContainer">
+                {% for crop in pagination %}
+                        <div class="card-header bg-success text-white">
+                            <h2>{{ crop.crop_name | default('Unknown Crop') }}</h2>
+                            <p><strong>AEZ:</strong> {{ crop.aez.name | default('Unknown AEZ') }}</p>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered table-striped text-center">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Scientific Name</th>
+                                        <th>Family</th>
+                                        <th>Image</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ crop.crop_scientific_name | default('N/A') }}</td>
+                                        <td>{{ crop.crop_family | default('N/A') }}</td>
+                                        <td>
+                                            {% if crop.link_image %}
+                                                <img src="{{ crop.link_image }}" alt="{{ crop.crop_name }}" class="img-fluid" style="max-width: 100px;">
+                                            {% else %}
+                                                No image available
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Centered Pagination Controls -->
+        <div class="d-flex justify-content-center align-items-center mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if pagination.currentPageNumber > 1 %}
+                        <li class="page-item">
+                            <a class="page-link btn btn-outline-primary mx-1" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': pagination.currentPageNumber - 1})) }}">
+                                <i class="fas fa-arrow-left"></i> Previous
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {{ knp_pagination_render(pagination) }}
+
+                    {% if pagination.currentPageNumber < pagination.pageCount %}
+                        <li class="page-item">
+                            <a class="page-link btn btn-outline-primary mx-1" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': pagination.currentPageNumber + 1})) }}">
+                                Next <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    
+{% endblock %}

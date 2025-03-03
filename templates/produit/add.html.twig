@@ -1,0 +1,111 @@
+{% extends 'base_front.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="card shadow-sm p-4">
+                    <h2 class="form-title text-center mb-4">Ajouter un produit</h2>
+                    
+                    {{ form_start(form, {'attr': {'class': 'row g-3', 'novalidate': 'novalidate'}}) }}
+
+                    <!-- Nom du produit -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.nom, {'attr': {'class': 'form-control' ~ (form.nom.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Nom du produit'}}) }}
+                            {{ form_label(form.nom, 'Nom du produit', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.nom) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.imageFile, {'attr': {'class': 'form-control-file' ~ (form.imageFile.vars.errors|length > 0 ? ' is-invalid' : ''), 'accept': 'image/*'}}) }}
+                            {{ form_label(form.imageFile, '   ', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.imageFile) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (form.description.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Description'}}) }}
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.description) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prix -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.prix, {'attr': {'class': 'form-control' ~ (form.prix.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Prix'}}) }}
+                            {{ form_label(form.prix, 'Prix', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.prix) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quantité -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.quantite, {'attr': {'class': 'form-control' ~ (form.quantite.vars.errors|length > 0 ? ' is-invalid' : ''), 'placeholder': 'Quantité'}}) }}
+                            {{ form_label(form.quantite, 'Quantité', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.quantite) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Catégories -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.categories, {'attr': {'class': 'form-control' ~ (form.categories.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            {{ form_label(form.categories, 'Catégories', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.categories) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date de création -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.date_creation_produit, {'attr': {'class': 'form-control' ~ (form.date_creation_produit.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            {{ form_label(form.date_creation_produit, 'Date de création', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.date_creation_produit) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date de modification -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form_widget(form.date_modification_produit, {'attr': {'class': 'form-control' ~ (form.date_modification_produit.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            {{ form_label(form.date_modification_produit, 'Date de modification', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.date_modification_produit) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Boutons -->
+                    <div class="col-12 text-center mt-4">
+                        <a href="{{ path('marketplace') }}" class="btn btn-secondary rounded-pill py-3 px-5">Retour</a>
+                        <button type="submit" class="btn btn-primary rounded-pill py-3 px-5">Ajouter</button>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
