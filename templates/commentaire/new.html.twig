@@ -1,26 +1,94 @@
 {# templates/commentaire_form.html.twig #}
 {% extends 'base.html.twig' %}
+
 {% block body %}
-<br>
-<br>
-<br>
-<br>
-<br>
-{{ form_start(form) }}
+    <br><br><br><br><br>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title text-center">Ajouter un commentaire</h3>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form) }}
 
-    <div>
-        {{ form_label(form.rate) }}
-        {{ form_widget(form.rate) }}
-        {{ form_errors(form.rate) }}
+                        {# Champ Note (Rate) #}
+                        <div class="form-group">
+                            {{ form_label(form.rate, 'Note', {'label_attr': {'class': 'font-weight-bold'}}) }}
+                            {{ form_widget(form.rate, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.rate) }}
+                        </div>
+
+                        {# Champ Commentaire #}
+                        <div class="form-group">
+                            {{ form_label(form.commentaire, 'Commentaire', {'label_attr': {'class': 'font-weight-bold'}}) }}
+                            {{ form_widget(form.commentaire, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                            {{ form_errors(form.commentaire) }}
+                        </div>
+
+                        {# Boutons de contrôle vocal #}
+                        <div class="form-group text-center">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary" id="startButton">
+                                    <i class="fas fa-microphone"></i> Démarrer
+                                </button>
+                                <button type="button" class="btn btn-outline-danger" id="stopButton">
+                                    <i class="fas fa-microphone-slash"></i> Arrêter
+                                </button>
+                            </div>
+                        </div>
+
+                        {# Bouton de soumission #}
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check"></i> Soumettre
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div>
-        {{ form_label(form.commentaire) }}
-        {{ form_widget(form.commentaire) }}
-        {{ form_errors(form.commentaire) }}
-    </div>
+    {# Inclusion des scripts nécessaires #}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            // Fonction pour mettre à jour la valeur du champ commentaire avec le texte vocal
+            function updateCommentaire(text) {
+                var currentCommentaire = $('[name="{{ form.commentaire.vars.full_name }}"]').val();
+                $('[name="{{ form.commentaire.vars.full_name }}"]').val(currentCommentaire + ' ' + text);
+            }
 
-    <button type="submit"class="btn btn-success">Submit</button>
+            if (annyang) {
+                annyang.setLanguage('fr-FR');
+                annyang.addCallback('result', function(phrases) {
+                    var text = phrases[0];
+                    updateCommentaire(text);
+                    console.log(text);
+                });
+            }
 
-{{ form_end(form) }}
+            $('#startButton').on('click', function() {
+                if (annyang) {
+                    annyang.start();
+                    $(this).prop('disabled', true);
+                    $('#stopButton').prop('disabled', false);
+                }
+            });
+
+            $('#stopButton').on('click', function() {
+                if (annyang) {
+                    annyang.abort();
+                    $(this).prop('disabled', true);
+                    $('#startButton').prop('disabled', false);
+                }
+            });
+        });
+    </script>
 {% endblock %}

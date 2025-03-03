@@ -160,4 +160,27 @@ public function delete(Request $request, Article $article, EntityManagerInterfac
     return $this->redirectToRoute('article_list'); 
 }
 
+
+#[Route('/articlesback', name: 'article_listback')]
+public function listback(EntityManagerInterface $entityManager): Response
+{
+    $articles = $entityManager->getRepository(Article::class)->findAll();
+
+    return $this->render('article/ListArticleBack.html.twig', [
+        'articles' => $articles,
+    ]);
+}
+#[Route('/article/delete/{id}', name: 'article_deleteback')]
+public function deleteback(EntityManagerInterface $entityManager, int $id): Response
+{
+    $article = $entityManager->getRepository(Article::class)->find($id);
+
+    if ($article) {
+        $entityManager->remove($article);
+        $entityManager->flush();
+    }
+
+    return $this->redirectToRoute('article_listback');
+}
+
 }
