@@ -1,0 +1,143 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture de commande #36</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+
+        .invoice-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid #ddd;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .invoice-info {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .invoice-info strong {
+            color: #222;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .invoice-table th, .invoice-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .invoice-table th {
+            background-color: #007bff;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .invoice-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            color: #222;
+            padding-top: 10px;
+            border-top: 2px solid #ddd;
+            margin-top: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            margin-top: 30px;
+        }
+
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="invoice-container">
+    <div class="invoice-header">
+        <h1> Facture</h1>
+        <p>Commande #<strong>36</strong></p>
+        <p>Date : <strong>2025-03-01 00:00:00</strong></p>
+    </div>
+
+    <div class="invoice-info">
+        <p><strong>Adresse de livraison :</strong> tounes</p>
+    </div>
+
+    <h2> Produits commandés</h2>
+    <table class="invoice-table">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Prix</th>
+            </tr>
+        </thead>
+        <tbody>
+                        <tr>
+                <td>point</td>
+                <td>20 €</td>
+            </tr>
+                        <tr>
+                <td>asmida</td>
+                <td>666 €</td>
+            </tr>
+                    </tbody>
+    </table>
+
+    <div class="total">
+        Total de la commande : <strong>548 €</strong>
+    </div>
+</div>
+
+<div class="footer">
+    <p>Merci pour votre commande ! 😊</p>
+    <p>Besoin d'aide ? <a href="mailto:support@example.com">Contactez-nous</a></p>
+</div>
+
+</body>
+</html>
