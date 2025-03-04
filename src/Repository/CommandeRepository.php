@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Commande;
-use App\Entity\Users;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,17 +16,28 @@ class CommandeRepository extends ServiceEntityRepository
         parent::__construct($registry, Commande::class);
     }
 
-    // src/Repository/CommandeRepository.php
+    //    /**
+    //     * @return Commande[] Returns an array of Commande objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('c.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-public function countValidatedCommandsByUser(Users $user): int
-{
-    return $this->createQueryBuilder('c')
-        ->select('count(c.id)')
-        ->andWhere('c.user = :user')
-        ->andWhere('c.status = :status')
-        ->setParameter('user', $user)
-        ->setParameter('status', 'Approuvé') // Assurez-vous que le statut correspond
-        ->getQuery()
-        ->getSingleScalarResult();
-}
+    //    public function findOneBySomeField($value): ?Commande
+    //    {
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }
