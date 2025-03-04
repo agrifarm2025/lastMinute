@@ -4,28 +4,18 @@ namespace App\Controller;
 
 use App\Entity\Commande;
 use App\Entity\Produit;
-use App\Entity\Users;
 use App\Form\CommandeType;
 use Doctrine\ORM\EntityManagerInterface;
-use Dompdf\Dompdf;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-
 class CommandeController extends AbstractController
 {
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/commande/{id}', name: 'commande_produit')]
-    public function commander(Produit $produit, Request $request): Response
+    public function commander(Produit $produit, Request $request, EntityManagerInterface $entityManager): Response
     {
         $commande = new Commande();
         $commande->setPrix($produit->getPrix());
@@ -36,16 +26,17 @@ class CommandeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $commande->setStatus('Approuvé');
-            $this->entityManager->persist($commande);
-            $this->entityManager->flush();
+            $entityManager->persist($commande);
+            $entityManager->flush();
 
             $this->addFlash('success', 'Commande approuvée et enregistrée avec succès !');
+
             return $this->redirectToRoute('agricole');
         }
 
         return $this->render('commande/commande.html.twig', [
             'form' => $form->createView(),
-            'produit' => $produit,
+            'produit' => $produit
         ]);
     }
 
@@ -56,19 +47,19 @@ class CommandeController extends AbstractController
     }
 
     #[Route('/panier', name: 'afficher_panier')]
-    public function afficherPanier(SessionInterface $session): Response
+    public function afficherPanier(SessionInterface $session, EntityManagerInterface $entityManager): Response
     {
         $panier = $session->get('panier', []);
         $produitsPanier = [];
         $total = 0;
 
         foreach ($panier as $id => $quantite) {
-            $produit = $this->entityManager->getRepository(Produit::class)->find($id);
+            $produit = $entityManager->getRepository(Produit::class)->find($id);
             if ($produit) {
                 $produitsPanier[] = [
                     'produit' => $produit,
                     'quantite' => $quantite,
-                    'prixTotal' => $produit->getPrix() * $quantite,
+                    'prixTotal' => $produit->getPrix() * $quantite
                 ];
                 $total += $produit->getPrix() * $quantite;
             }
@@ -76,18 +67,16 @@ class CommandeController extends AbstractController
 
         return $this->render('commande/panier.html.twig', [
             'produitsPanier' => $produitsPanier,
-            'total' => $total,
+            'total' => $total
         ]);
     }
 
     #[Route('/panier/ajouter/{id}', name: 'ajouter_au_panier')]
-    public function ajouterAuPanier(int $id, SessionInterface $session): Response
+    public function ajouterAuPanier(int $id, SessionInterface $session, EntityManagerInterface $entityManager): Response
     {
-        $produit = $this->entityManager->getRepository(Produit::class)->find($id);
-
+        $produit = $entityManager->getRepository(Produit::class)->find($id);
         if (!$produit) {
-            $this->addFlash('error', 'Le produit demandé n\'existe pas.');
-            return $this->redirectToRoute('agricole');
+            throw $this->createNotFoundException('Produit introuvable');
         }
 
         $panier = $session->get('panier', []);
@@ -95,6 +84,7 @@ class CommandeController extends AbstractController
         $session->set('panier', $panier);
 
         $this->addFlash('success', 'Produit ajouté au panier avec succès !');
+
         return $this->redirectToRoute('agricole');
     }
 
@@ -117,106 +107,102 @@ class CommandeController extends AbstractController
     #[Route('/commander-panier', name: 'commander_panier')]
     public function commanderPanier(SessionInterface $session): Response
     {
+        // Récupérer le panier depuis la session
         $panier = $session->get('panier', []);
-
+    
+        // Vérifier si le panier est vide
         if (empty($panier)) {
             $this->addFlash('error', 'Votre panier est vide.');
             return $this->redirectToRoute('afficher_panier');
         }
-
+    
+        // Rediriger vers la page de validation de la commande
         return $this->redirectToRoute('valider_commande');
     }
 
     #[Route('/valider-commande', name: 'valider_commande')]
-    public function validerCommande(SessionInterface $session, Request $request)
+    public function validerCommande(SessionInterface $session, EntityManagerInterface $entityManager, Request $request): Response
     {
         $panier = $session->get('panier', []);
+    
         if (empty($panier)) {
             $this->addFlash('error', 'Votre panier est vide.');
             return $this->redirectToRoute('afficher_panier');
         }
-
-        $user = $this->getUser();
-        if (!$user instanceof Users) {
-            $this->addFlash('error', 'Vous devez être connecté pour passer une commande.');
-            return $this->redirectToRoute('app_register');
-        }
-
+    
         $commande = new Commande();
-        $produitsCommande = [];
+    
+        $produitsCommande = []; // Initialisation correcte de la variable
         $total = 0;
-
+    
         foreach ($panier as $id => $quantite) {
-            $produit = $this->entityManager->getRepository(Produit::class)->find($id);
+            $produit = $entityManager->getRepository(Produit::class)->find($id);
             if ($produit) {
-                $prixTotal = $produit->getPrix() * $quantite;
+                // Vérifier si la quantité demandée est disponible
+                if ($produit->getQuantite() < $quantite) {
+                    $this->addFlash('error', "Stock insuffisant pour le produit : " . $produit->getNom());
+                    return $this->redirectToRoute('afficher_panier');
+                }
+    
                 $produitsCommande[] = [
                     'produit' => $produit,
                     'quantite' => $quantite,
-                    'prixTotal' => $prixTotal,
+                    'prixTotal' => $produit->getPrix() * $quantite
                 ];
-                $total += $prixTotal;
+    
+                $total += $produit->getPrix() * $quantite;
             }
         }
-
-        $reductionAppliquee = $this->verifierReduction($user, $total);
-        if ($reductionAppliquee) {
-            $total *= 0.8;
-        }
-
-        $validatedCommandsCount = $this->entityManager->getRepository(Commande::class)
-            ->count(['user' => $user, 'status' => 'Approuvé']);
-
+    
+        // Création du formulaire de validation de commande
         $form = $this->createForm(CommandeType::class, $commande);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
-            $commande->setQuantite(array_sum(array_column($produitsCommande, 'quantite')));
-            $commande->setPrix($total);
-            $commande->setStatus('Approuvé');
-            $commande->setDateCreationCommande(new \DateTimeImmutable('today'));
-            $commande->setUser($user);
-            $commande->setTypeCommande('Standard');
-
+            $adress = $form->get('adress')->getData();
+            $typeCommande = $form->get('typeCommande')->getData();
+            $paiment = $form->get('paiment')->getData();
+    
+            if ($typeCommande === null) {
+                $this->addFlash('error', 'Le type de commande est requis.');
+                return $this->redirectToRoute('valider_commande');
+            }
+    
+            $commande->setAdress($adress);
+            $commande->setTypeCommande($typeCommande);
+            $commande->setPaiment($paiment);
+            $commande->setDateCreationCommande(new \DateTime());
+            $commande->setStatus('En attente');
+    
             foreach ($produitsCommande as $item) {
                 $produit = $item['produit'];
-                $quantite = $item['quantite'];
-
-                if ($quantite === null) {
-                    throw new \Exception("La quantité ne peut pas être nulle pour le produit : " . $produit->getId());
-                }
-
-                $produit->setQuantite($produit->getQuantite() - $quantite);
-                $commande->addProduit($produit);
-                $this->entityManager->persist($produit);
-            }
-
-            $this->entityManager->persist($commande);
-            $this->entityManager->flush();
-
-            $session->remove('panier');
-
-
     
-
-            return $this->redirectToRoute('checkout',['id'=>$commande->getId()]);
+                // Diminuer la quantité en stock
+                $produit->setQuantite($produit->getQuantite() - $item['quantite']);
+    
+                // Associer le produit à la commande
+                $commande->addProduit($produit);
+                $commande->setQuantite($commande->getQuantite() + $item['quantite']);
+                $commande->setPrix($commande->getPrix() + $item['prixTotal']);
+    
+                $entityManager->persist($produit); // Sauvegarde des nouvelles quantités
+            }
+    
+            $entityManager->persist($commande);
+            $entityManager->flush();
+    
+            // Vider le panier après validation
+            $session->remove('panier');
+    
+            $this->addFlash('success', 'Votre commande a été passée avec succès !');
+    
+            return $this->redirectToRoute('agricole');
         }
-
+    
         return $this->render('commande/commande.html.twig', [
             'form' => $form->createView(),
-            'produitsCommande' => $produitsCommande,
-            'total' => $total,
-            'reductionAppliquee' => $reductionAppliquee,
-            'validatedCommandsCount' => $validatedCommandsCount,
+            'produitsCommande' => $produitsCommande, // Vérification que la variable est bien transmise
+            'total' => $total
         ]);
-    }
-
-
-    private function verifierReduction(Users $user, float $total): bool
-    {
-        $nombreCommandes = $this->entityManager->getRepository(Commande::class)
-            ->count(['user' => $user, 'status' => 'Approuvé']);
-
-        return $nombreCommandes > 5;
     }
 }

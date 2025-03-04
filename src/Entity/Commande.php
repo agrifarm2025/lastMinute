@@ -7,8 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\Entity\Users; // Importez la classe Users
+use symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 class Commande
@@ -25,20 +24,20 @@ class Commande
     private ?int $prix = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank(message: "Le type de commande est obligatoire.")]
+    #[Assert\NotBlank(message: "La type commande est obligatoire.")]
     private string $typeCommande;
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "L'adresse est obligatoire.")]
-    #[Assert\Length(min: 5, max: 100, minMessage: "L'adresse doit contenir au moins 5 caractères.")]
+    #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[Assert\Length(min: 5,max:100, minMessage: "La description doit contenir au moins 5 caractères.")]
     private ?string $adress = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
-#[Assert\NotBlank(message: "Le mode de paiement est obligatoire.")]
-private string $paiment; // Changez ici de `array` à `string`
+    #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true)]
+    #[Assert\NotBlank(message: "Le paiement est obligatoire.")]
+    private array $paiment = [];
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date_creation_commande = null;
@@ -48,9 +47,6 @@ private string $paiment; // Changez ici de `array` à `string`
      */
     #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'commandes')]
     private Collection $produits;
-
-    #[ORM\ManyToOne(inversedBy: 'commandes')]
-    private ?Users $user = null; // Utilisez "Users" et non "users"
 
     public function __construct()
     {
@@ -70,6 +66,7 @@ private string $paiment; // Changez ici de `array` à `string`
     public function setQuantite(int $quantite): static
     {
         $this->quantite = $quantite;
+
         return $this;
     }
 
@@ -81,6 +78,7 @@ private string $paiment; // Changez ici de `array` à `string`
     public function setPrix(int $prix): static
     {
         $this->prix = $prix;
+
         return $this;
     }
 
@@ -92,6 +90,7 @@ private string $paiment; // Changez ici de `array` à `string`
     public function setTypeCommande(string $typeCommande): self
     {
         $this->typeCommande = $typeCommande;
+
         return $this;
     }
 
@@ -103,6 +102,7 @@ private string $paiment; // Changez ici de `array` à `string`
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -114,16 +114,19 @@ private string $paiment; // Changez ici de `array` à `string`
     public function setAdress(string $adress): static
     {
         $this->adress = $adress;
+
         return $this;
     }
-    public function getPaiment(): string
+
+    public function getPaiment(): array
     {
         return $this->paiment;
     }
-    
-    public function setPaiment(string $paiment): self
+
+    public function setPaiment(array $paiment): self
     {
         $this->paiment = $paiment;
+
         return $this;
     }
 
@@ -135,6 +138,7 @@ private string $paiment; // Changez ici de `array` à `string`
     public function setDateCreationCommande(\DateTimeInterface $date_creation_commande): static
     {
         $this->date_creation_commande = $date_creation_commande;
+
         return $this;
     }
 
@@ -150,27 +154,20 @@ private string $paiment; // Changez ici de `array` à `string`
     {
         if (!$this->produits->contains($produit)) {
             $this->produits->add($produit);
-            $produit->addCommande($this);
+            // Ensure reverse relationship is set
+            $produit->addCommande($this); // Add the command to the product
         }
+
         return $this;
     }
 
     public function removeProduit(Produit $produit): static
     {
         if ($this->produits->removeElement($produit)) {
+            // If the produit is removed, remove the reverse relation
             $produit->removeCommande($this);
         }
-        return $this;
-    }
 
-    public function getUser(): ?Users // Utilisez "Users" et non "users"
-    {
-        return $this->user;
-    }
-
-    public function setUser(?Users $user): static // Utilisez "Users" et non "users"
-    {
-        $this->user = $user;
         return $this;
     }
 }

@@ -5,15 +5,12 @@ parameters:
     app.jwtsecret: '%env(JWT_SECRET)%'
     openweathermap.api_key: '%env(OPENWEATHERMAP_API_KEY)%'
     openweathermap.api_endpoint: '%env(OPENWEATHERMAP_API_ENDPOINT)%'
-    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
-
 # default configuration for services in *this* file 
 services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        bind:
-            $stripeSK: '%stripe_secret_key%'
+
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:

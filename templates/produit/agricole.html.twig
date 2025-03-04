@@ -15,12 +15,7 @@
                 {% endif %}
             </a>
         </div>
-        <nav>
-        <ul>
-            <li><a href="{{ path('liste_commandes') }}">Liste des Commandes</a></li>
-            <!-- Ajoutez d'autres liens de navigation ici -->
-        </ul>
-    </nav>
+
         {# 🔎 Barre de recherche #}
         <div class="row justify-content-center mb-4">
             <div class="col-md-6">
@@ -62,7 +57,7 @@
 
                         <!-- 🛒 Boutons -->
                         <div class="text-center mt-3">
-                            <a href="{{ path('ajouter_au_panier', {id: produit.id}) }}" class="btn btn-secondary rounded-pill px-4 py-2">
+                            <a href="{{ path('ajouter_au_panier', {'id': produit.id}) }}" class="btn btn-secondary rounded-pill px-4 py-2">
                                 <i class="fas fa-cart-plus"></i> Ajouter au panier
                             </a>
                         </div>
