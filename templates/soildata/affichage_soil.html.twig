@@ -37,19 +37,15 @@
             </div>
         </div>
 
-        <!-- Statistics Button -->
-        <div class="text-center mt-5">
-            <a href="{{ path('app_soil_statistics') }}" class="btn btn-info border-2 py-2 px-4 rounded-pill">
-                <i class="fas fa-chart-bar me-2"></i> Statistics
-            </a>
-        </div>
+        <!-- Statistics Button (Only for this crop) -->
+<div class="text-center mt-5">
+    <a href="{{ path('app_crop_soil_statistics', {'cropId': crop.id}) }}" class="btn btn-info border-2 py-2 px-4 rounded-pill">
+        <i class="fas fa-chart-bar me-2"></i> View {{ crop.typeCrop }} Statistics
+    </a>
+</div>
 
-        <!-- Ideal Conditions Button -->
-        <div class="text-center mt-3">
-            <a href="{{ path('app_crop_ideal_conditions') }}" class="btn btn-success border-2 py-2 px-4 rounded-pill">
-                <i class="fas fa-seedling me-2"></i> Generate Ideal Conditions
-            </a>
-        </div>
+
+       
     </div>
 </div>
 {% endblock %}

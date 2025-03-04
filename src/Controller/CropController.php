@@ -13,6 +13,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Service\CropInfoService;
 use App\Service\CropCalendarService;
 use Knp\Component\Pager\PaginatorInterface;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\SvgWriter;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
 
 
 
@@ -153,10 +157,6 @@ class CropController extends AbstractController
         ]);
     }
     
-    
-    
-
-
 #[Route('/updatecrop/{id}', name: 'app_updateformcrop', methods: ['GET', 'POST'])]
 public function updateformcrop(Request $request, EntityManagerInterface $entityManager, CropRepository $cropRepository, CropCalendarService $cropCalendarService, int $id): Response
 {
@@ -224,8 +224,11 @@ public function updateformcrop(Request $request, EntityManagerInterface $entityM
                     'plantationDate' => $plantationDate->format('d-m-Y'),
                     'earlySowingDates' => $earlySowingDates,
                     'lateSowingDates' => $lateSowingDates,
-                    'cropName' => $crop->getTypeCrop()
+                    'cropName' => $crop->getTypeCrop(),
+                    'errorType' => 'plantation',
+                    'cropId' => $crop->getId() // ✅ Fix: Pass correct crop ID
                 ]);
+                
             }
         }
 
@@ -258,7 +261,7 @@ public function updateformcrop(Request $request, EntityManagerInterface $entityM
             ['code' => 'TN', 'name' => 'Tunisia'],
         ];
         return $this->render('crop/affichage.html.twig', [
-            'crop' => $crops,
+            'crops' => $crops,
             'countries' => $countries,
             'pagination' => $pagination, // Pass the pagination object to the template
 
@@ -294,45 +297,60 @@ public function updateformcrop(Request $request, EntityManagerInterface $entityM
         $crops = $entityManager->getRepository(Crop::class)->findAll();
 
         return $this->render('crop/backcropaffiche.html.twig', [
-            'crops' => $crops,
+            'crop' => $crops,
         ]);
     }
 
     #[Route('/crop/recherche', name: 'recherche_crop', methods: ['GET'])]
-    public function rechercherCrops(Request $request, CropRepository $cropRepository): Response
+    public function rechercherCrops(Request $request, CropRepository $cropRepository, PaginatorInterface $paginator): Response
     {
         $searchTerm = $request->query->get('search');
         $queryBuilder = $cropRepository->createQueryBuilder('c');
-
+    
         if (!empty($searchTerm)) {
             $queryBuilder
                 ->where('c.type_crop LIKE :searchTerm')
                 ->orWhere('c.crop_event LIKE :searchTerm')
                 ->setParameter('searchTerm', "%" . $searchTerm . "%");
         }
-
-        $crops = $queryBuilder->getQuery()->getResult();
-
+    
+        // Apply pagination
+        $pagination = $paginator->paginate(
+            $queryBuilder->getQuery(), // Query to paginate
+            $request->query->getInt('page', 1), // Current page number (default: 1)
+            10 // Items per page
+        );
+    
         return $this->render('crop/affichage.html.twig', [
-            'crop' => $crops,
+            'pagination' => $pagination,
+            'searchTerm' => $searchTerm,
         ]);
     }
+    
 
     #[Route('/crop/trier', name: 'trier_crop', methods: ['GET'])]
-    public function trierCrops(Request $request, CropRepository $cropRepository): Response
+    public function trierCrops(Request $request, CropRepository $cropRepository, PaginatorInterface $paginator): Response
     {
         $sort = $request->query->get('sort', 'type_crop');
         $order = $request->query->get('order', 'asc');
-
+    
         $queryBuilder = $cropRepository->createQueryBuilder('c');
         $queryBuilder->orderBy('c.' . $sort, $order);
-
-        $crops = $queryBuilder->getQuery()->getResult();
-
+    
+        // Apply pagination
+        $pagination = $paginator->paginate(
+            $queryBuilder->getQuery(),
+            $request->query->getInt('page', 1), // Get current page
+            10 // Items per page
+        );
+    
         return $this->render('crop/affichage.html.twig', [
-            'crop' => $crops,
+            'pagination' => $pagination,
+            'sort' => $sort,
+            'order' => $order,
         ]);
     }
+    
 
     #[Route('/crop/crop_Info', name: 'crop_Info')]
     public function cropInfo(
@@ -394,6 +412,56 @@ public function updateformcrop(Request $request, EntityManagerInterface $entityM
             'error' => $error
         ]);
     }
+
+    #[Route('/crop/{id}/qr', name: 'crop_qr')]
+    public function qrCode(Crop $crop): Response
+    {
+        // Retrieve all associated soil data for this crop (OneToMany relation)
+        $soilDataList = $crop->getSoildata();
+    
+        // Start QR Code Data with Crop Details
+        $data = sprintf(
+            "Crop Event: %s\nCrop Type: %s\nMethod: %s\nPlantation: %s %s\nHarvest: %s %s\n",
+            $crop->getCropEvent(),
+            $crop->getTypeCrop(),
+            $crop->getMethodeCrop(),
+            $crop->getDatePlantation()?->format('d-m-Y') ?? 'N/A',
+            $crop->getHeurePlantation()?->format('H:i') ?? 'N/A',
+            $crop->getDateCrop()?->format('d-m-Y') ?? 'N/A',
+            $crop->getHeureCrop()?->format('H:i') ?? 'N/A'
+        );
+    
+        // Append each Soil Data record associated with the crop
+        if (!$soilDataList->isEmpty()) {
+            $data .= "\n=== Soil Data ===\n";
+            foreach ($soilDataList as $index => $soil) {
+                $data .= sprintf(
+                    "Soil #%d:\n- Type: %s\n- pH Level: %.2f\n- Nutrient Level: %.2f\n- Humidity: %.2f\n",
+                    $index + 1,
+                    $soil->getTypeSol(),
+                    $soil->getNiveauPh(),
+                    $soil->getNiveauNutriment(),
+                    $soil->getHumidite()
+                );
+            }
+        } else {
+            $data .= "\nNo Soil Data Available\n";
+        }
+    
+        // Generate the QR Code with all Crop & Soil Data
+        $qrCode = Builder::create()
+            ->writer(new SvgWriter()) // Use SVG format
+            ->data($data)
+            ->encoding(new Encoding('UTF-8'))
+            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
+            ->size(300)
+            ->margin(10)
+            ->build();
+    
+        // Return the QR Code as SVG
+        return new Response($qrCode->getString(), Response::HTTP_OK, ['Content-Type' => 'image/svg+xml']);
+    }
+    
 }
 
 
