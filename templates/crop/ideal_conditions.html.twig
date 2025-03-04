@@ -1,0 +1,24 @@
+{% extends 'base_front.html.twig' %}
+
+{% block n_page %}Ideal Soil Conditions{% endblock %}
+
+{% block body %}
+<div class="container py-6">
+    <h1 class="text-center mb-5">Ideal Soil Conditions</h1>
+
+    <div class="row">
+        {% for condition, values in idealConditions %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm p-3">
+                    <h5 class="text-center">{{ condition }}</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Minimum:</strong> {{ values.min }}</li>
+                        <li class="list-group-item"><strong>Maximum:</strong> {{ values.max }}</li>
+                        <li class="list-group-item"><strong>Average:</strong> {{ values.average|round(2) }}</li>
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Crop Calendar - Tunisia{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center mt-4">FAO Crop Calendar - Tunisia</h1>
+
+        <!-- AEZ Filter Dropdown -->
+        <div class="mb-4">
+            <label for="aezFilter" class="form-label"><strong>Filter by Agro-Ecological Zone (AEZ):</strong></label>
+            <select id="aezFilter" class="form-select">
+                <option value="all">All AEZs</option>
+                
+                {% set aezGroups = pagination|reduce((carry, cropData) => carry|merge({(cropData.aez.name): true}), {}) %}
+                
+                {% for aezName in aezGroups|keys %}
+                    <option value="{{ aezName }}">{{ aezName }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        {% if error is not null %}
+            <div class="alert alert-danger">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        {% elseif pagination is empty %}
+            <div class="alert alert-warning">
+                No crop calendar data available.
+            </div>
+        {% else %}
+            <div id="cropContainer">
+                {% for cropData in pagination %}
+                    <div class="card mb-4 crop-item" data-aez="{{ cropData.aez.name }}">
+                        <div class="card-header bg-primary text-white">
+                            <h2>{{ cropData.crop.name ?? 'Unknown Crop' }}</h2>
+                            <p><strong>AEZ:</strong> {{ cropData.aez.name ?? 'Unknown AEZ' }}</p>
+                        </div>
+                        <div class="card-body">
+                            {% if cropData.sessions is not empty %}
+                                <h3>Sessions</h3>
+                                <table class="table table-bordered table-striped text-center">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Early Sowing</th>
+                                            <th>Late Sowing</th>
+                                            <th>Early Harvest</th>
+                                            <th>Late Harvest</th>
+                                            <th>Growing Period</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for session in cropData.sessions %}
+                                            <tr>
+                                                <td>{{ session.early_sowing.month ?? 'N/A' }}/{{ session.early_sowing.day ?? 'N/A' }}</td>
+                                                <td>{{ session.later_sowing.month ?? 'N/A' }}/{{ session.later_sowing.day ?? 'N/A' }}</td>
+                                                <td>{{ session.early_harvest.month ?? 'N/A' }}/{{ session.early_harvest.day ?? 'N/A' }}</td>
+                                                <td>{{ session.late_harvest.month ?? 'N/A' }}/{{ session.late_harvest.day ?? 'N/A' }}</td>
+                                                <td>{{ session.growing_period.value ?? 'N/A' }} {{ session.growing_period.period ?? '' }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <div class="alert alert-info text-center">
+                                    No session data available.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Centered Pagination Controls -->
+        <div class="d-flex justify-content-center align-items-center mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if pagination.currentPageNumber > 1 %}
+                        <li class="page-item">
+                            <a class="page-link btn btn-outline-primary mx-1" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': pagination.currentPageNumber - 1})) }}">
+                                <i class="fas fa-arrow-left"></i> Previous
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {{ knp_pagination_render(pagination) }}
+
+                    {% if pagination.currentPageNumber < pagination.pageCount %}
+                        <li class="page-item">
+                            <a class="page-link btn btn-outline-primary mx-1" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': pagination.currentPageNumber + 1})) }}">
+                                Next <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- JavaScript to filter crops by AEZ -->
+    <script>
+        document.getElementById('aezFilter').addEventListener('change', function() {
+            let selectedAEZ = this.value;
+            let crops = document.querySelectorAll('.crop-item');
+
+            crops.forEach(crop => {
+                if (selectedAEZ === 'all' || crop.dataset.aez === selectedAEZ) {
+                    crop.style.display = 'block';
+                } else {
+                    crop.style.display = 'none';
+                }
+            });
+        });
+    </script>
+{% endblock %}
+

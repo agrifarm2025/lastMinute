@@ -1,0 +1,95 @@
+{% extends 'base_front.html.twig' %}
+
+{% block n_page %}Soil Statistics{% endblock %}
+
+{% block body %}
+<div class="container py-6">
+    <h1 class="text-center mb-5">Soil Data Statistics</h1>
+
+    <div class="row">
+        <!-- Graphique en barres - Niveau de pH -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm p-3">
+                <h5 class="text-center">Soil pH Levels</h5>
+                <canvas id="phChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Graphique en lignes - Humidité -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm p-3">
+                <h5 class="text-center">Soil Humidity Levels</h5>
+                <canvas id="humidityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Graphique en camembert - Répartition des types de sol -->
+        <div class="col-md-12">
+            <div class="card shadow-sm p-3">
+                <h5 class="text-center">Soil Type Distribution</h5>
+                <canvas id="soilTypeChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Importation de Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Données JSON envoyées par le contrôleur
+        const phLevels = {{ phLevels|raw }};
+        const humidityLevels = {{ humidityLevels|raw }};
+        const soilTypeCounts = {{ soilTypeCounts|raw }};
+
+        // Extraire les clés et valeurs pour le camembert
+        const soilTypeLabels = Object.keys(soilTypeCounts);
+        const soilTypeValues = Object.values(soilTypeCounts);
+
+        // 🎨 Graphique en barres - Niveau de pH
+        new Chart(document.getElementById('phChart'), {
+            type: 'bar',
+            data: {
+                labels: phLevels.map((_, i) => `Soil ${i + 1}`),
+                datasets: [{
+                    label: 'pH Level',
+                    data: phLevels,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        // 📈 Graphique en lignes - Humidité
+        new Chart(document.getElementById('humidityChart'), {
+            type: 'line',
+            data: {
+                labels: humidityLevels.map((_, i) => `Soil ${i + 1}`),
+                datasets: [{
+                    label: 'Humidity',
+                    data: humidityLevels,
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            }
+        });
+
+        // 🥧 Graphique en camembert - Répartition des types de sol
+        new Chart(document.getElementById('soilTypeChart'), {
+            type: 'pie',
+            data: {
+                labels: soilTypeLabels,
+                datasets: [{
+                    label: 'Soil Type Distribution',
+                    data: soilTypeValues,
+                    backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56', '#4bc0c0', '#9966ff'],
+                }]
+            }
+        });
+    });
+</script>
+{% endblock %}
