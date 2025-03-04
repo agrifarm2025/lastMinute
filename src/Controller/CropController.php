@@ -21,30 +21,53 @@ use Symfony\Bridge\Doctrine\ManagerRegistry as DoctrineManagerRegistry;
 class CropController extends AbstractController
 {
     #[Route('/crop/add/{id}', name: 'app_crop_add', methods: ['GET', 'POST'])]
-    public function add(Request $request, EntityManagerInterface $entityManager,$id): Response
-    {
-        $crop = new Crop();
-        $form = $this->createForm(CropType::class, $crop);
-        $form->handleRequest($request);
+public function add(Request $request, EntityManagerInterface $entityManager, $id): Response
+{
+    $crop = new Crop();
+    $form = $this->createForm(CropType::class, $crop);
+    $form->handleRequest($request);
 
-       
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Persist the crop to the database
-            $entityManager->persist($crop);
-            $entityManager->flush();
-    
-            // Add a success flash message (optional)
-            $this->addFlash('success', 'Crop ajouté avec succès !');
-    
-            // Redirect to the crop affichage page
-            return $this->redirectToRoute('field', ['id' => $id]);
+    if ($form->isSubmitted() && $form->isValid()) {
+        // 🔹 Récupérer la température depuis le capteur
+        $temperature = $this->getTemperatureFromSensor();
+
+        if ($temperature !== null) {
+            $crop->setTemperature($temperature);
         }
-    
-        // Render the form if it's not submitted or invalid
-        return $this->render('crop/add.html.twig', [
-            'form' => $form->createView(),
-        ]);
+
+        // 🔹 Sauvegarde du crop
+        $entityManager->persist($crop);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Crop ajouté avec succès avec température: ' . $temperature . '°C !');
+
+        return $this->redirectToRoute('field', ['id' => $id]);
     }
+
+    return $this->render('crop/add.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
+/**
+ * 🔥 Fonction pour récupérer la température depuis l'ESP8266
+ */
+private function getTemperatureFromSensor(): ?float
+{
+    $espServer = "http://192.168.70.1/projet/crop/temperature";
+
+    try {
+        $response = file_get_contents($espServer);
+        if ($response === false) {
+            throw new \Exception("Impossible d'obtenir la température.");
+        }
+
+        return floatval($response);
+    } catch (\Exception $e) {
+        return null; // En cas d'erreur, on met une température nulle
+    }
+}
+
 
     #[Route('/updatecrop/{id}', name: 'app_updateformcrop', methods: ['GET', 'POST'])]
 public function updateformcrop(Request $request, EntityManagerInterface $entityManager, CropRepository $rep, int $id): Response
@@ -84,14 +107,14 @@ public function updateformcrop(Request $request, EntityManagerInterface $entityM
 
     
     #[Route("/crop/affichage/{id}", name:"crop_affichage")]
-    public function affichage(CropRepository $em,$id): Response
-{
-    $crops = $em->find($id);
-    return $this->render('crop/affichage.html.twig', [ // Fixed template name
-        'products' => $crops,
-    ]);
+    public function affichage(CropRepository $em, $id): Response
+    {
+        $crops = $em->find($id);
+        return $this->render('crop/affichage.html.twig', [
+            'products' => $crops,
+        ]);
+    }
     
-}
 
 #[Route('/deletecrop/{id}', name: 'delete_crop')]  
 public function deleteCrop(CropRepository $cropRepository, EntityManagerInterface $em, $id): Response 
