@@ -28,11 +28,15 @@ class RegistrationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // recuperer le donner de image 
-            if($photo = $form['photo']->getData()){
+            if ($photo = $form['photo']->getData()) {
                 $fileName = uniqid().'.'.$photo->guessExtension();
-                $photo->move($photoDir,$fileName) ;
+                $photo->move($photoDir, $fileName);
+            } else {
+                $fileName = 'default.jpg'; // Set a default image when no photo is uploaded
             }
+            
             $user->setImageFileName($fileName);
+            
             
             /** @var string $plainPassword */
             $plainPassword = $form->get('password')->getData();

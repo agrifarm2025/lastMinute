@@ -48,11 +48,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
                 if (!$user) {
                     throw new CustomUserMessageAuthenticationException('Email non trouvé.');
                 }
-
-                if (!$user->isVerified()) {
-                    throw new CustomUserMessageAuthenticationException('Votre compte n\'est pas encore vérifié.');
-                }
-
                 return $user;
             }),
             new PasswordCredentials($request->getPayload()->getString('password')),
