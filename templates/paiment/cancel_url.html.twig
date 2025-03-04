@@ -1,0 +1,12 @@
+
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Hello PaimentController!{% endblock %}
+
+{% block body %}
+
+{{ parent( ) }}
+<form action="/checkout" method="POST">
+      <button type="submit" class="btn btn-primary btn-lg">Checkout</button>
+    </form> 
+{% endblock %}
