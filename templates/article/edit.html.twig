@@ -16,6 +16,12 @@
                     {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
                 </div>
 
+                <!-- Slug Field -->
+                <div class="form-group">
+                    {{ form_label(form.slug) }}
+                    {{ form_widget(form.slug, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
                 <!-- Content Field -->
                 <div class="form-group">
                     {{ form_label(form.content) }}
@@ -43,13 +49,19 @@
                     <small class="form-text text-muted">Upload a new image if you want to replace the current one.</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block">Update</button>
+                {# Bouton Submit avec icône #}
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-check"></i> Update
+                </button>
                 {{ form_end(form) }}
             </div>
         </div>
 
+        <!-- Bouton "Back to Article" avec icône -->
         <div class="text-center mt-4">
-            <a href="{{ path('article_show', {'id': article.id}) }}" class="btn btn-secondary">Back to Article</a>
+            <a href="{{ path('article_show', {'id': article.id}) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Article
+            </a>
         </div>
     </div>
 {% endblock %}

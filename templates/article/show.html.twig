@@ -10,147 +10,117 @@
             <div class="col-md-8 offset-md-2">
                 <div class="card">
                     <div class="card-body">
-                        <!-- Display image if it exists -->
                         {% if article.image %}
                             <div class="text-center mb-4">
-                                <img src="{{ asset(article.image) }}" alt="{{ article.title }}" class="img-fluid" />
+                                <img src="{{ asset(article.image) }}" alt="{{ article.title }}" class="img-fluid rounded shadow" />
                             </div>
                         {% endif %}
-                        
-                        <p class="card-text">{{ article.content }}</p>
-                        <p><strong>Featured Text:</strong> {{ article.featuredText }}</p>
-                        <p><strong>Created At:</strong> {{ article.createdAt|date('Y-m-d H:i:s') }}</p>
-                        <p><strong>Updated At:</strong> {{ article.updatedAt ? article.updatedAt|date('Y-m-d H:i:s') : 'Not updated' }}</p>
 
+                        <p class="card-text">{{ article.content }}</p>
+                        {% if article.featuredText %}
+                            <p><strong>Featured Text:</strong> {{ article.featuredText }}</p>
+                        {% endif %}
+                        <p><strong>Created At:</strong> {{ article.createdAt|date('Y-m-d H:i:s') }}</p>
+
+                        {# Boutons avec icônes #}
                         <div class="text-center mt-4">
-                            <a href="{{ path('article_edit', {'id': article.id}) }}" class="btn btn-warning">Edit</a>
+                            <a href="{{ path('app_commentaire_index', {'articleId': article.id}) }}" class="btn btn-primary">
+                                <i class="fas fa-comments"></i> View Comments
+                            </a>
+                            <a href="{{ path('article_edit', {'id': article.id}) }}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
                             <form action="{{ path('article_delete', {'id': article.id}) }}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this article?');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                                <li class="facebook">
-            <a href="https://www.facebook.com/sharer/sharer.php?u={{ absolute_url(path('article_show', {'id': article.getId()})) }}" class="social-icon social-facebook" title="Facebook" target="_blank">
-                <i class="fab fa-facebook-f"></i>
-            </a>
-        </li>
-         <li class="twitter">
-            <a href="https://twitter.com/intent/tweet?text={{ article.title|url_encode }}%20{{ absolute_url(path('article_show', {'id': article.getId()})) }}%20@medihealth" class="social-icon social-twitter" title="Twitter" target="_blank">
-                <i class="fab fa-twitter"></i>
-            </a>
-        </li>
-        <li class="linkedin">
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolute_url(path('article_show', {'id': article.getId()})) }}" class="social-icon social-linkedin" title="LinkedIn" target="_blank">
-                <i class="fab fa-linkedin-in"></i>
-            </a>
-        </li>
-        <li class="pinterest">
-            <a href="https://www.pinterest.com/pin/create/button/?url={{ absolute_url(path('article_show', {'id': article.getId()})) }}&media={{ article.image }}&description={{ article.content }}" class="social-icon social-pinterest" title="Pinterest" target="_blank">
-                <i class="fab fa-pinterest"></i>
-            </a>
-        </li>
-        <li class="reddit">
-            <a href="https://www.reddit.com/submit?url={{ absolute_url(path('article_show', {'id': article.getId()})) }}" class="social-icon social-reddit" title="Reddit" target="_blank">
-                <i class="fab fa-reddit-alien"></i>
-            </a>
-        </li>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
                             </form>
-                            <a href="{{ path('article_list') }}" class="btn btn-secondary">Back to List</a>
+                            <a href="{{ path('article_list') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+
+                        {# Boutons de partage social #}
+                        <div class="social-buttons mt-4 text-center">
+                            <p>Share this article on:</p>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ absolute_url(path('article_show', {'id': article.getId()})) }}" class="btn" style="background-color: #3b5998; color: white;" title="Facebook" target="_blank">
+                                <i class="fab fa-facebook-f"></i> Facebook
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?text={{ article.title|url_encode }}%20{{ absolute_url(path('article_show', {'id': article.getId()})) }}%20@medihealth" class="btn" style="background-color: #1da1f2; color: white;" title="Twitter" target="_blank">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </a>
+                            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolute_url(path('article_show', {'id': article.getId()})) }}" class="btn" style="background-color: #0077b5; color: white;" title="LinkedIn" target="_blank">
+                                <i class="fab fa-linkedin-in"></i> LinkedIn
+                            </a>
+                            <a href="https://www.pinterest.com/pin/create/button/?url={{ absolute_url(path('article_show', {'id': article.getId()})) }}&media={{ article.image }}&description={{ article.content }}" class="btn" style="background-color: #bd081c; color: white;" title="Pinterest" target="_blank">
+                                <i class="fab fa-pinterest"></i> Pinterest
+                            </a>
+                            <a href="https://www.reddit.com/submit?url={{ absolute_url(path('article_show', {'id': article.getId()})) }}" class="btn" style="background-color: #ff4500; color: white;" title="Reddit" target="_blank">
+                                <i class="fab fa-reddit-alien"></i> Reddit
+                            </a>
                         </div>
                     </div>
-                </div> <!-- Button to view all comments for the article -->
-                        <div class="text-center mt-4">
-                            <a href="{{ path('app_commentaire_index', {'articleId': article.id}) }}" class="btn btn-primary">View Comments</a>
-                        </div>
+                </div>
             </div>
-            <div>
-<div>
-        <button onclick="rechercherGooglee()">Rechercher sur Google</button>
+        </div>
+
+        {# Boutons supplémentaires #}
+        <div class="mt-4 text-center">
+            <button onclick="rechercherGooglee()" class="btn btn-info">
+                <i class="fas fa-search"></i> Rechercher sur Google
+            </button>
+            <button onclick="speakSelectedText()" class="btn btn-success">
+                <i class="fas fa-volume-up"></i> Lire en vocal
+            </button>
+            <button onclick="stopSpeaking()" class="btn btn-danger">
+                <i class="fas fa-stop"></i> Arrêter
+            </button>
+        </div>
     </div>
-  <button onclick="speakSelectedText()" class="btn btn-danger" style="background-color:green;"><i class="fas fa-volume-up"></i> Lire en vocal</button>
-<button onclick="stopSpeaking()" class="btn btn-danger" style="background-color:red;"><i class="fas fa-stop"></i> Arrêter</button>
 
-</div>
-            <script type="text/javascript">
-    var currentUtterance = null;
+    {# Scripts JavaScript #}
+    <script type="text/javascript">
+        var currentUtterance = null;
 
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({autoDisplay: false}, 'google_translate_element');
-    }
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ autoDisplay: false }, 'google_translate_element');
+        }
 
-    function speakSelectedText() {
-        var selectedText = window.getSelection().toString();
-        if (selectedText) {
-            stopSpeaking();
-            currentUtterance = new SpeechSynthesisUtterance(selectedText);
-            // Détecter la langue du texte sélectionné et définir la langue de la synthèse vocale en conséquence
-            if (selectedText.match(/[\u0600-\u06FF]/)) {
-                currentUtterance.lang = 'ar'; // Arabe
-            } else if (selectedText.match(/[àáâãäå]/) || selectedText.match(/[éèêë]/) || selectedText.match(/[îï]/) || selectedText.match(/[ôöøœ]/) || selectedText.match(/[ùúûü]/) || selectedText.match(/[ç]/)) {
-                currentUtterance.lang = 'fr'; // Français
+        function speakSelectedText() {
+            var selectedText = window.getSelection().toString();
+            if (selectedText) {
+                stopSpeaking();
+                currentUtterance = new SpeechSynthesisUtterance(selectedText);
+                if (selectedText.match(/[\u0600-\u06FF]/)) {
+                    currentUtterance.lang = 'ar'; // Arabe
+                } else if (selectedText.match(/[àáâãäå]/) || selectedText.match(/[éèêë]/) || selectedText.match(/[îï]/) || selectedText.match(/[ôöøœ]/) || selectedText.match(/[ùúûü]/) || selectedText.match(/[ç]/)) {
+                    currentUtterance.lang = 'fr'; // Français
+                } else {
+                    currentUtterance.lang = 'en'; // Anglais par défaut
+                }
+                window.speechSynthesis.speak(currentUtterance);
             } else {
-                currentUtterance.lang = 'en'; // Anglais par défaut
+                alert("Veuillez sélectionner du texte pour le lire à voix haute.");
             }
-            window.speechSynthesis.speak(currentUtterance);
-        } else {
-            alert("Veuillez sélectionner du texte pour le lire à voix haute.");
         }
-    }
 
-    function stopSpeaking() {
-        if (currentUtterance !== null) {
-            window.speechSynthesis.cancel();
-            currentUtterance = null;
-        }
-    }
-</script>
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-<script type="text/javascript">
-    var currentUtterance = null;
-
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({autoDisplay: false}, 'google_translate_element');
-    }
-
-    function speakSelectedText() {
-        var selectedText = window.getSelection().toString();
-        if (selectedText) {
-            stopSpeaking();
-            currentUtterance = new SpeechSynthesisUtterance(selectedText);
-            // Détecter la langue du texte sélectionné et définir la langue de la synthèse vocale en conséquence
-            if (selectedText.match(/[\u0600-\u06FF]/)) {
-                currentUtterance.lang = 'ar'; // Arabe
-            } else if (selectedText.match(/[àáâãäå]/) || selectedText.match(/[éèêë]/) || selectedText.match(/[îï]/) || selectedText.match(/[ôöøœ]/) || selectedText.match(/[ùúûü]/) || selectedText.match(/[ç]/)) {
-                currentUtterance.lang = 'fr'; // Français
-            } else {
-                currentUtterance.lang = 'en'; // Anglais par défaut
+        function stopSpeaking() {
+            if (currentUtterance !== null) {
+                window.speechSynthesis.cancel();
+                currentUtterance = null;
             }
-            window.speechSynthesis.speak(currentUtterance);
-        } else {
-            alert("Veuillez sélectionner du texte pour le lire à voix haute.");
         }
-    }
 
-    function stopSpeaking() {
-        if (currentUtterance !== null) {
-            window.speechSynthesis.cancel();
-            currentUtterance = null;
-        }
-    }
-</script>
- <script>
         function rechercherGooglee() {
             var selectedText = window.getSelection().toString().trim();
             if (selectedText !== '') {
-                // Effectuer une recherche Google avec le texte sélectionné
                 var googleSearchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(selectedText);
-                // Ouvrir les résultats de recherche dans une nouvelle fenêtre
                 window.open(googleSearchUrl, '_blank');
             } else {
                 alert('Veuillez sélectionner du texte à rechercher.');
             }
         }
     </script>
-        </div>
-    </div>
-{% endblock %} 
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+{% endblock %}
