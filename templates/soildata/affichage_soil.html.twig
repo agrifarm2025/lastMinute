@@ -1,35 +1,35 @@
 {% extends 'base_front.html.twig' %}
 
-{% block n_page %}List Soil Data{% endblock %}
-
 {% block body %}
+
+{% block n_page %}List soil <data value=""></data>{% endblock %}
+
 <div class="container-fluid bg-light bg-icon py-6">
     <div class="container">
         <div class="section-header text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
             <h1 class="display-5 mb-3">Soil Data List</h1>
         </div>
-
-        <div class="row g-4 d-flex align-items-stretch">
-            <!-- Loop through soil data -->
+        <div class="row g-4">
             {% for f in soil %}
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="bg-white text-center h-100 p-4 p-xl-5 shadow-sm rounded">
+                    <div class="bg-white text-center h-100 p-4 p-xl-5">
                         <img class="img-fluid mb-4" src="{{ asset('front/img/icon-1.png') }}" alt="">
-                        <p class="mb-2"><strong>Niveau pH: </strong>{{ f.niveauPh }}</p>
-                        <p class="mb-2"><strong>Niveau Nutriment: </strong>{{ f.niveauNutriment }}</p>
-                        <p class="mb-2"><strong>Humidité: </strong>{{ f.humidite }}</p>
-                        <p class="mb-4"><strong>Type de Sol: </strong>{{ f.typeSol }}</p>
-
+                        <h4 class="mb-3">{{ f.niveauPh }}</h4>
+                        <p class="mb-4"></p>
                         <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('app_updateformsoil', {'id': f.id}) }}">Modify</a>
                         <a class="btn btn-outline-danger border-2 py-2 px-4 rounded-pill" href="{{ path('delete_soil', {'id': f.id}) }}">Delete</a>
                     </div>
                 </div>
+        
             {% endfor %}
+             <!-- Display the "add" button when there are no soil records -->
+           
 
-            <!-- Add Soil Button (Beside the cards) -->
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center rounded shadow-sm">
-                    <a href="{{ path('app_soil_add', {'cropId': crop.id}) }}" class="text-white text-decoration-none">
+                <!-- Display the "add" button when there are no soil records -->
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center cursor-pointer" 
+                         data-href="{{ path('app_soil_add', {'cropId': crop.id}) }}" 
+                         onclick="window.location.href=this.getAttribute('data-href')">
                         <h1 class="text-white mb-0">+</h1>
                         <p class="text-white">Add Soil</p>
                     </a>
@@ -37,15 +37,20 @@
             </div>
         </div>
 
-        <!-- Statistics Button (Only for this crop) -->
-<div class="text-center mt-5">
-    <a href="{{ path('app_crop_soil_statistics', {'cropId': crop.id}) }}" class="btn btn-info border-2 py-2 px-4 rounded-pill">
-        <i class="fas fa-chart-bar me-2"></i> View {{ crop.typeCrop }} Statistics
-    </a>
-</div>
+        <!-- Statistics Button -->
+        <div class="text-center mt-5">
+            <a href="{{ path('app_soil_statistics') }}" class="btn btn-info border-2 py-2 px-4 rounded-pill">
+                <i class="fas fa-chart-bar me-2"></i> Statistics
+            </a>
+        </div>
 
-
-       
+        <!-- Ideal Conditions Button -->
+        <div class="text-center mt-3">
+            <a href="{{ path('app_crop_ideal_conditions') }}" class="btn btn-success border-2 py-2 px-4 rounded-pill">
+                <i class="fas fa-seedling me-2"></i> Generate Ideal Conditions
+            </a>
+        </div>
     </div>
 </div>
+
 {% endblock %}

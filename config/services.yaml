@@ -19,7 +19,19 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-  
+    App\Service\CropInfoService:
+        arguments:
+            $client: '@Symfony\Contracts\HttpClient\HttpClientInterface'
+   
+
+    App\Service\CropCalendarService:
+        arguments:
+            $client: '@http_client'
+            $logger: '@logger'
+
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
     App\Controller\WeatherController:
         arguments: []
     # Explicitly define the WeatherService
@@ -30,26 +42,7 @@ services:
 
     Twilio\Rest\Client:
         arguments:
-            $username: '%env(TWILIO_SID)%'
-            $password: '%env(TWILIO_TOKEN)%'
-
-
-    App\Controller\:
-        resource: '../src/Controller/'
-        tags: ['controller.service_arguments']
-    
-    App\Service\CropManageApiService:
-        arguments:
-            $client: '@http_client'
-    
-    App\Service\CropCalendarService:
-        arguments:
-            $client: '@http_client'
-            $logger: '@logger'
-    
-    App\Service\CropInfoService:
-        arguments:
-            $client: '@Symfony\Contracts\HttpClient\HttpClientInterface'
-
+            - '%env(TWILIO_SID)%'
+            - '%env(TWILIO_TOKEN)%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

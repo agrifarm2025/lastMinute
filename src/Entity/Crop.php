@@ -57,8 +57,6 @@ class Crop
     #[ORM\OneToMany(targetEntity: Soildata::class, mappedBy: 'crop')]
     private Collection $Soildata;
 
-  
-
 
     public function __construct()
     {

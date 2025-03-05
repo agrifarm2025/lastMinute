@@ -3,104 +3,48 @@
 {% block n_page %}List Crop{% endblock %}
 
 {% block body %}
-<div class="container-fluid bg-light bg-icon py-6">
-    <div class="container">
-        <div class="section-header text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
-            <h1 class="display-5 mb-3">Crop List</h1>
-        </div>
 
-        <!-- Search Bar -->
-        <form method="get" action="{{ path('recherche_crop') }}" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Search by Type or Event..." value="{{ searchTerm|default('') }}">
-                <button type="submit" class="btn btn-primary">Search</button>
-            </div>
-        </form>
+{% block n_page %}List crop{% endblock %}
 
-            <!-- 🗓️ Crop Calendar Button -->
-        <div class="text-center mt-3">
-            <a href="{{ path('crop_calendar') }}" class="btn btn-primary border-2 py-2 px-4 rounded-pill">
-                <i class="fas fa-calendar-alt me-2"></i> Crop Calendar
-            </a>
-        </div>
+<!-- Search Bar -->
+<form method="get" action="{{ path('recherche_crop') }}" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Search by Type or Event..." value="{{ app.request.query.get('search') }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
 
-        <!-- 📊 Crop Info Button -->
-        <div class="text-center mt-3">
-            <a href="{{ path('crop_Info') }}" class="btn btn-info border-2 py-2 px-4 rounded-pill">
-                <i class="fas fa-info-circle me-2"></i> Crop Info
-            </a>
-        </div>
+<!-- Buttons Section - Centered -->
+<div class="text-center mb-4">
+    <a href="{{ path('crop_calendar') }}" class="btn btn-success rounded-pill py-3 px-5 mx-2">
+        View Crop Calendar
+    </a>
+    <a href="{{ path('crop_Info') }}" class="btn btn-info rounded-pill py-3 px-5 mx-2">
+        View Crop Info
+    </a>
+</div>
 
-        <div class="row g-4 d-flex align-items-stretch">
-            <!-- Loop through crops -->
-            {% for f in crops %}
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="bg-white text-center h-100 p-4 p-xl-5 shadow-sm rounded">
-                        <img class="img-fluid mb-4" src="{{ asset('Front/img/icon-1.png')}}" alt="">
-                        <p class="mb-2"><strong>Crop Event: </strong>{{ f.cropEvent }}</p>           
-                        <p class="mb-2"><strong>Crop Type: </strong>{{ f.typeCrop }}</p>
-                        <p class="mb-2"><strong>Plantation Date: </strong>{{ f.datePlantation|date('d-m-Y') }}</p>
-                        <p class="mb-4"><strong>Harvest Date: </strong>{{ f.dateCrop|date('d-m-Y') }}</p>
+<!-- Crop List -->
+<div class="row g-4">
+    {% for f in crop %}
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="bg-white text-center h-100 p-4 p-xl-5">
+                <img class="img-fluid mb-4" src="{{ asset('Front/img/icon-1.png')}}" alt="">
+                <p class="mb-4"><strong>Crop Event: </strong>{{ f.cropevent }}</p>           
+                <p class="mb-4"><strong>Crop Type: </strong>{{ f.typeCrop }}</p>
 
-                        <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('app_updateformcrop', {'id': f.id}) }}">Modify</a>
-                        <a class="btn btn-outline-danger border-2 py-2 px-4 rounded-pill" href="{{ path('delete_crop', {'id': f.id}) }}">Delete</a>
-                        <a href="{{ path('soildata_affichage', {'id': f.id}) }}" class="btn btn-primary rounded-pill py-3 px-5">Go to Soil Data</a>
-                        
-                        <!-- QR Code Button -->
-                        <button class="btn btn-secondary rounded-pill py-2 px-4 mt-2" onclick="showQrCode('{{ path('crop_qr', {'id': f.id}) }}', '{{ f.cropEvent }}')">
-                            Show QR Code
-                        </button>
-                    </div>
-                </div>
-            {% else %}
-                <p class="text-center">No crops found.</p>
-            {% endfor %}
-
-            <!-- Add Crop Button -->
-           
-        </div>
-
-        <!-- QR Code Modal -->
-        <div id="qrCodeModal" class="modal fade" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">QR Code for <span id="cropTitle"></span></h5>
-                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <img id="qrCodeImage" src="" alt="QR Code" class="img-fluid">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
+                <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('app_updateformcrop', {'id': f.id}) }}">Modify</a>
+                <a class="btn btn-outline-danger border-2 py-2 px-4 rounded-pill" href="{{ path('delete_crop', {'id': f.id}) }}">Delete</a>
+                <a href="{{ path('soildata_affichage', {'id': f.id}) }}" class="btn btn-primary rounded-pill py-3 px-5">Go to Soil Data</a>
             </div>
         </div>
+    {% endfor %}
+</div>
 
-        <!-- JavaScript for QR Code Modal -->
-        <script>
-            function showQrCode(qrUrl, cropName) {
-                document.getElementById('qrCodeImage').src = qrUrl;
-                document.getElementById('cropTitle').textContent = cropName;
-                var qrModal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
-                qrModal.show();
-            }
-        </script>
-
-        <!-- Statistics Button -->
-        <div class="text-center mt-5">
-            <a href="{{ path('app_soil_statistics') }}" class="btn btn-info border-2 py-2 px-4 rounded-pill">
-                <i class="fas fa-chart-bar me-2"></i> Statistics
-            </a>
-        </div>
-
-        <!-- Ideal Conditions Button -->
-        <div class="text-center mt-3">
-            <a href="{{ path('app_crop_ideal_conditions') }}" class="btn btn-success border-2 py-2 px-4 rounded-pill">
-                <i class="fas fa-seedling me-2"></i> Generate Ideal Conditions
-            </a>
-        </div>
+<!-- Add Crop Button -->
+<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center cursor-pointer" onclick="window.location.href='{{ path('app_crop_add') }}'">
+        <h1 class="text-white mb-0">+</h1>
     </div>
 </div>
 {% endblock %}
