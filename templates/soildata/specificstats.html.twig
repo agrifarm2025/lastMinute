@@ -4,12 +4,12 @@
 
 {% block body %}
 <div class="container py-6">
-    <h1 class="text-center mb-3 fw-bold text-primary">Soil Data Statistics</h1>
-    <p class="text-center text-muted mb-5">Analyze soil pH levels, humidity distribution, nutrient content, and soil types.</p>
+    <h1 class="text-center mb-4 fw-bold text-primary">Soil Data Statistics</h1>
+    <p class="text-center text-muted mb-5">An overview of soil quality indicators including pH levels, humidity, and nutrient concentration.</p>
 
     <div class="row">
         <!-- Graphique en barres - Niveau de pH -->
-        <div class="col-lg-6 col-md-12 mb-4">
+        <div class="col-lg-4 col-md-6 mb-4">
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-primary text-white text-center fw-bold">Soil pH Levels</div>
                 <div class="card-body">
@@ -19,7 +19,7 @@
         </div>
 
         <!-- Graphique en lignes - Humidité -->
-        <div class="col-lg-6 col-md-12 mb-4">
+        <div class="col-lg-4 col-md-6 mb-4">
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-danger text-white text-center fw-bold">Soil Humidity Levels</div>
                 <div class="card-body">
@@ -29,28 +29,18 @@
         </div>
 
         <!-- Graphique en barres - Niveau de Nutriments -->
-        <div class="col-lg-6 col-md-12 mb-4">
+        <div class="col-lg-4 col-md-6 mb-4">
             <div class="card shadow-lg border-0">
-                <div class="card-header bg-warning text-dark text-center fw-bold">Soil Nutrient Levels</div>
+                <div class="card-header bg-success text-white text-center fw-bold">Soil Nutrient Levels</div>
                 <div class="card-body">
                     <canvas id="nutrientChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Graphique en camembert - Répartition des types de sol -->
-        <div class="col-lg-6 col-md-12 mb-4">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-success text-white text-center fw-bold">Soil Type Distribution</div>
-                <div class="card-body">
-                    <canvas id="soilTypeChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Importation de Chart.js -->
+<!-- Import Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -59,11 +49,6 @@
         const phLevels = {{ phLevels|raw }};
         const humidityLevels = {{ humidityLevels|raw }};
         const nutrientLevels = {{ nutrientLevels|raw }};
-        const soilTypeCounts = {{ soilTypeCounts|raw }};
-
-        // Extraire les clés et valeurs pour le camembert
-        const soilTypeLabels = Object.keys(soilTypeCounts);
-        const soilTypeValues = Object.values(soilTypeCounts);
 
         // Chart Configuration
         const chartOptions = {
@@ -71,8 +56,7 @@
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: true,
-                    position: 'top'
+                    display: false
                 },
                 tooltip: {
                     backgroundColor: 'rgba(0,0,0,0.8)',
@@ -127,7 +111,7 @@
             options: chartOptions
         });
 
-        // 🌿 Graphique en barres - Niveau de Nutriments
+        // 🥦 Graphique en barres - Niveau de Nutriments
         new Chart(document.getElementById('nutrientChart'), {
             type: 'bar',
             data: {
@@ -135,36 +119,13 @@
                 datasets: [{
                     label: 'Nutrient Level',
                     data: nutrientLevels,
-                    backgroundColor: 'rgba(255, 205, 86, 0.7)',
-                    borderColor: 'rgba(255, 205, 86, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1,
-                    hoverBackgroundColor: 'rgba(255, 205, 86, 1)'
+                    hoverBackgroundColor: 'rgba(75, 192, 192, 1)'
                 }]
             },
             options: chartOptions
-        });
-
-        // 🥧 Graphique en camembert - Répartition des types de sol
-        new Chart(document.getElementById('soilTypeChart'), {
-            type: 'pie',
-            data: {
-                labels: soilTypeLabels,
-                datasets: [{
-                    label: 'Soil Type Distribution',
-                    data: soilTypeValues,
-                    backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56', '#4bc0c0', '#9966ff', '#ff9f40'],
-                    hoverOffset: 10
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
         });
 
     });

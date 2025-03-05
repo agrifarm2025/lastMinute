@@ -33,33 +33,33 @@ class CommentController extends AbstractController
     ]);
 }
     // Route to add a new comment
-    #[Route('/article/{articleId}/comment/new', name: 'app_commentaire_new', methods: ['GET', 'POST'])]
-    public function new(int $articleId, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        // Create a new Commentaire object and associate it with the article
-        $commentaire = new Commentaire();
-        $commentaire->setArticle($entityManager->getRepository(Article::class)->find($articleId));
+   #[Route('/article/{articleId}/comment/new', name: 'app_commentaire_new', methods: ['GET', 'POST'])]
+public function new(int $articleId, Request $request, EntityManagerInterface $entityManager): Response
+{
+    // Créez un nouveau commentaire et associez-le à l'article
+    $commentaire = new Commentaire();
+    $article = $entityManager->getRepository(Article::class)->find($articleId);
+    $commentaire->setArticle($article);
 
-        // Create the form for the comment
-        $form = $this->createForm(CommentaireType::class, $commentaire);
-        $form->handleRequest($request);
+    // Créez le formulaire
+    $form = $this->createForm(CommentaireType::class, $commentaire);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Persistez le commentaire dans la base de données
+        $entityManager->persist($commentaire);
+        $entityManager->flush();
 
-            // Persist the comment to the database
-            $entityManager->persist($commentaire);
-            $entityManager->flush();
-
-            // Redirect back to the article's comment list
-            return $this->redirectToRoute('app_commentaire_index', ['articleId' => $articleId]);
-        }
-
-        return $this->render('commentaire/new.html.twig', [
-            'commentaire' => $commentaire,
-            'form' => $form->createView(),
-        ]);
+        // Redirigez l'utilisateur vers la liste des commentaires
+        return $this->redirectToRoute('app_commentaire_index', ['articleId' => $articleId]);
     }
+
+    // Affichez le formulaire avec les erreurs de validation
+    return $this->render('commentaire/new.html.twig', [
+        'commentaire' => $commentaire,
+        'form' => $form->createView(),
+    ]);
+}
 
     // Route to delete a comment
     #[Route('/comment/{id}/delete', name: 'app_commentaire_delete', methods: ['POST'])]

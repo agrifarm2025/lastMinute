@@ -1,58 +1,96 @@
 {% extends 'base_front.html.twig' %}
+
 {% block n_page %}Farm{% endblock %}
 
 {% block body %}
-<style>
-    /* Custom CSS for the addition column */
-.cursor-pointer {
-    cursor: pointer;
-}
-
-.bg-secondary {
-    background-color: #6c757d; /* Bootstrap's secondary color */
-    transition: background-color 0.3s ease;
-}
-
-.bg-secondary:hover {
-    background-color: #5a6268; /* Darker shade on hover */
-}
-</style>
-
-
 <div class="container-fluid bg-light bg-icon py-6">
     <div class="container">
         <div class="section-header text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
             <h1 class="display-5 mb-3">Choose a Farm</h1>
-            <p>explication</p>
         </div>
+
         <div class="row g-4 justify-content-center">
             {% for f in tab %}
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="bg-white  h-100 p-4 p-xl-5 position-relative">
-                    <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2" data-href="{{ path('delete_farm',{'id':f.id}) }}" onclick="window.location.href=this.getAttribute('data-href')" style="z-index: 10;">
-                        <i class="fas fa-times"></i>
-                    </button>
+                <div class="bg-white h-100 p-4 p-xl-5 position-relative">
                     <img class="img-fluid mb-4 d-block mx-auto" src="{{ asset('front/img/icon-1.png')}}" alt="">
                     <h4 class="mb-3 text-center">{{ f.name }}</h4>
-                    <p class="mb-4"><strong>Adress: </strong>{{f.adress}}</p>
-                    <p class="mb-4"><strong>surface: </strong>{{f.surface}}</p>
-                    <p class="mb-4"><strong>Budget: </strong>{{f.budget}}dt</p>
+                    <p class="mb-4"><strong>Address: </strong>{{ f.adress }}</p>
+                    <p class="mb-4"><strong>Surface: </strong>{{ f.surface }}</p>
+                    <p class="mb-4"><strong>Budget: </strong>{{ f.budget }} dt</p>
 
-                    <p class="mb-4">{{f.description}}</p>
+                    <!-- QR Code Button -->
+                    <button class="btn btn-secondary rounded-pill py-2 px-4 mt-2" onclick="openQrModal({{ f.id }})">
+                        Generate QR Code
+                    </button>
 
-                    <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{path('list',{'id':f.id})}}">Show details</a>
-                    <a class="btn btn-outline-secondary border-2 py-2 px-4 rounded-pill" href="{{path('farm_update',{'id':f.id})}}" >Modify</a>
+                    <a class="btn btn-outline-secondary border-2 py-2 px-4 rounded-pill" href="{{ path('farm_update', {'id': f.id}) }}">Modify</a>
                 </div>
             </div>
             {% endfor %}
-
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                 <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center cursor-pointer" data-href="{{ path('farm') }}" onclick="window.location.href=this.getAttribute('data-href')">
                     <h1 class="text-white mb-0">+</h1>
                 </div>
             </div>
         </div>
+            
+        <!-- QR Code Modal -->
+        <div id="qrCodeModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Scan QR Code & Enter Access Code</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img id="qrCodeImage" src="" alt="QR Code" class="img-fluid">
+                        <p class="mt-3"><strong>Enter Access Code:</strong></p>
+                        <input type="text" id="accessCodeInput" class="form-control text-center mb-3" placeholder="Enter Code">
+                        <p id="errorMessage" class="text-danger" style="display: none;"></p>
+                        <button class="btn btn-primary" onclick="verifyAccess()">Verify</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let currentFarmId = null;
+
+            function openQrModal(farmId) {
+                currentFarmId = farmId;
+                document.getElementById("errorMessage").style.display = "none";
+                
+                fetch(`/farm/${farmId}/qr`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("qrCodeImage").src = data.qrCode;
+                        var qrModal = new bootstrap.Modal(document.getElementById("qrCodeModal"));
+                        qrModal.show();
+                    });
+            }
+
+            function verifyAccess() {
+                const accessCode = document.getElementById("accessCodeInput").value;
+
+                fetch(`/farm/verify/${currentFarmId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: new URLSearchParams({ "access_code": accessCode }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        document.getElementById("errorMessage").innerText = data.message;
+                        document.getElementById("errorMessage").style.display = "block";
+                    }
+                });
+            }
+        </script>
     </div>
 </div>
-
 {% endblock %}

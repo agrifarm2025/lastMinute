@@ -21,7 +21,19 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-  
+    App\Service\CropInfoService:
+        arguments:
+            $client: '@Symfony\Contracts\HttpClient\HttpClientInterface'
+   
+
+    App\Service\CropCalendarService:
+        arguments:
+            $client: '@http_client'
+            $logger: '@logger'
+
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
     App\Controller\WeatherController:
         arguments: []
     # Explicitly define the WeatherService
@@ -29,7 +41,7 @@ services:
         arguments:
             $apiKey: '%openweathermap.api_key%'
             $apiEndpoint: '%openweathermap.api_endpoint%'
-
+    
     Twilio\Rest\Client:
         arguments:
             - '%env(TWILIO_SID)%'
