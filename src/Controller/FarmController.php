@@ -21,6 +21,7 @@ use Endroid\QrCode\ErrorCorrectionLevel;
 use Symfony\Component\HttpFoundation\Session\SessionInterface; // ✅ Correct namespace
 use Symfony\Component\HttpFoundation\JsonResponse; // ✅ Correct namespace
 
+use Endroid\QrCode\Writer\PngWriter;
 
 
 class FarmController extends AbstractController
@@ -244,7 +245,7 @@ class FarmController extends AbstractController
         // ✅ Generate the QR Code containing the access code
         $qrData = sprintf("Access Code: %s", $randomCode);
         $qrCode = Builder::create()
-            ->writer(new SvgWriter())
+            ->writer(new PngWriter())
             ->data($qrData)
             ->encoding(new Encoding('UTF-8'))
             ->errorCorrectionLevel(ErrorCorrectionLevel::High)
