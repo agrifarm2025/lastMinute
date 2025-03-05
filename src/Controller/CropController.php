@@ -31,8 +31,8 @@ class CropController extends AbstractController
         $this->cropCalendarService = $cropCalendarService;
     }
 
-    #[Route('/crop/add', name: 'app_crop_add', methods: ['GET', 'POST'])]
-    public function add(Request $request, EntityManagerInterface $entityManager, CropCalendarService $cropCalendarService): Response
+    #[Route('/crop/add/{id}', name: 'app_crop_add', methods: ['GET', 'POST'])]
+    public function add(Request $request, EntityManagerInterface $entityManager, CropCalendarService $cropCalendarService,$id): Response
     {
         $crop = new Crop();
     
@@ -149,11 +149,12 @@ class CropController extends AbstractController
             $entityManager->flush();
     
             $this->addFlash('success', 'Culture ajoutée avec succès !');
-            return $this->redirectToRoute('crop_affichage');
+            return $this->redirectToRoute('field', ['id' => $id]);
         }
     
         return $this->render('crop/add.html.twig', [
             'form' => $form->createView(),
+
         ]);
     }
     
@@ -245,28 +246,29 @@ public function updateformcrop(Request $request, EntityManagerInterface $entityM
     ]);
 }
 
+
     #[Route("/crop/affichage", name: "crop_affichage")]
-    public function affichage(CropRepository $em,PaginatorInterface $paginator,Request $request): Response
+    public function affichage(CropRepository $cropRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        $crops = $em->findAll();
-        $queryBuilder = $em->createQueryBuilder('c')->getQuery();
+        // Fetch crops from database
+        $queryBuilder = $cropRepository->createQueryBuilder('c');
 
-    // Paginate the query
-    $pagination = $paginator->paginate(
-        $queryBuilder, // Query to paginate
-        $request->query->getInt('page', 1), // Current page number, default to 1
-        10 // Number of items per page
-    );
-        $countries = [
-            ['code' => 'TN', 'name' => 'Tunisia'],
-        ];
+        // Apply pagination
+        $pagination = $paginator->paginate(
+            $queryBuilder->getQuery(), // Query to paginate
+            $request->query->getInt('page', 1), // Current page number, default to 1
+            10 // Number of items per page
+        );
+
+        // Fetch all crops
+        $crops = $cropRepository->findAll();
+
         return $this->render('crop/affichage.html.twig', [
-            'crops' => $crops,
-            'countries' => $countries,
-            'pagination' => $pagination, // Pass the pagination object to the template
-
+            'crops' => $crops, // ✅ Pass crops to the template
+            'pagination' => $pagination,
         ]);
     }
+
 
     #[Route('/deletecrop/{id}', name: 'delete_crop')]
     public function deleteCrop(CropRepository $cropRepository, EntityManagerInterface $em, $id): Response
@@ -463,5 +465,3 @@ public function updateformcrop(Request $request, EntityManagerInterface $entityM
     }
     
 }
-
-

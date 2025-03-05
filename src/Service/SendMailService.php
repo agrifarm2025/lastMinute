@@ -1,5 +1,4 @@
 <?php
-// src/Service/SendMailService.php
 namespace App\Service;
 
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -20,8 +19,9 @@ class SendMailService
         string $subject,
         string $template,
         array $context
-    ): void {
-        // Create the email
+    ): void
+    {
+        //On crée le mail
         $email = (new TemplatedEmail())
             ->from($from)
             ->to($to)
@@ -29,18 +29,7 @@ class SendMailService
             ->htmlTemplate("emails/$template.html.twig")
             ->context($context);
 
-        // Send the email
+        // On envoie le mail
         $this->mailer->send($email);
-    }
-
-    public function sendEmailWithCode(string $to, string $code): void
-    {
-        $this->send(
-            'janmedali3@gmail.com', // From
-            $to, // To
-            'Your Verification Code', // Subject
-            'verification_code', // Template name (without .html.twig)
-            ['code' => $code] // Context (variables passed to the template)
-        );
     }
 }

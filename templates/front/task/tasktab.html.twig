@@ -87,6 +87,28 @@
             <h1 class="display-5 mb-3">{{ field.name }}</h1>
             <p>Manage your tasks efficiently</p>
         </div>
+        {% if field.crop==null %}
+        <div class="row g-4 justify-content-center">
+            <div>
+            {% if farm.Cabin==false %}
+            <a href="{{path('cabin',{'id':field.id})}}" class="btn btn-danger">create cabin Tasks</a>
+            {% endif %}
+            {% if farm.fence==false %}
+            <a href="{{ path('fence', {'id': field.id}) }}" class="btn btn-primary">Add Fence Tasks</a>
+            {% endif %}
+            {% if farm.irrigation==false %}
+            <a href="{{ path('water', {'id': field.id}) }}" class="btn btn-info">Add Water Tasks</a>
+            {% endif %}
+            {% if farm.irrigation==false %}
+
+            <a href="{{ path('irrigation', {'id': field.id}) }}" class="btn btn-success">Add Irrigation Tasks</a>
+            {% endif %}
+            {% if farm.bir==false %}
+            <a href="{{ path('photo', {'id': field.id}) }}" class="btn btn-warning">Add Photovoltaic Tasks</a>
+            {% endif %}
+        </div>
+        </div>
+        {% endif %}
 
         <div class="kanban-table">
             <!-- To Do Column -->

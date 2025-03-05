@@ -166,11 +166,6 @@ public function index(EntityManagerInterface $entityManager): Response
 }
 
 
-
-
-
-
-
     #[Route('/soil/statistics', name: 'app_soil_statistics')]
     public function indexx(SoildataRepository $soilRepository)
     {

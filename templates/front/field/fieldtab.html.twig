@@ -16,6 +16,43 @@
 .bg-secondary:hover {
     background-color: #5a6268; /* Darker shade on hover */
 }
+/* Temperature card styling */
+.temperature-card {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #3bb815a2;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-top: 200px;
+    margin-right: 50px;
+
+}
+
+.temperature-card:hover {
+    transform: scale(1.05);
+}
+
+.temperature-card img {
+    width: 50px;
+    margin-bottom: 1rem;
+}
+
+.temperature-card h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.temperature-card p {
+    margin: 0;
+    font-size: 1rem;
+    color: #555;
+}
 </style>
 
 
@@ -23,10 +60,32 @@
     <div class="container">
         <div class="section-header text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
             <h1 class="display-5 mb-3">{{ farm.name }}</h1>
-            <p>choose a field</p>
+            <p>{{zone}}</p>
         </div>
-        <div class="row g-4 justify-content-center">
+        <div class="temperature-card" data-href="{{ path('weather', {'lon': farm.lon, 'lat': farm.lat}) }}" onclick="window.location.href=this.getAttribute('data-href')">
+            <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="{{ weather.description }}" class="mb-3">
+            
+            <h4>Temperature</h4>
+            <p>{{ temperature }}°C</p>
+            <p>{{ description }}</p>
+        </div>
+       
+        {% if warning != null %}
+        <div class="temperature-card" data-href="{{ path('weather', {'lon': farm.lon, 'lat': farm.lat}) }}" onclick="window.location.href=this.getAttribute('data-href')">
+            <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="{{ weather.description }}" class="mb-3">
+        
+            <h4>Temperature</h4>
+            <p>{{ temperature }}°C</p>
+            <p>{{ description }}</p>
+        </div>
+        <div class="alert alert-danger text-center">
+            {{ warning }}
+            
+        </div>
+        {% endif %}
+             <div class="row g-4 justify-content-center">
             {% for f in fields %}
+           
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                
                 <div class="bg-white  h-100 p-4 p-xl-5 position-relative">
@@ -40,8 +99,7 @@
                     <h4 class="mb-3 text-center">{{ f.name }}</h4>
                     <p class="mb-4 text-center" style="width: 100%; background-color: #155f25; padding: 10px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                         <strong style="color: white; font-size: 1.2rem; letter-spacing: 1px; text-transform: uppercase;">
-                            {{ f.crop.getTypeCrop() }}
-                        </strong>
+                            {{ f.crop.getTypeCrop() ?? "farm specific" }}                        </strong>
                     </p>
                     
                     <p class="mb-4"><strong>Surface: </strong>{{f.surface}}</p>
@@ -54,6 +112,7 @@
                     <a class="btn btn-outline-secondary border-2 py-2 px-4 rounded-pill" href="{{ path('field_update', {'id': f.id}) }}">Modify</a>
                 </div>
             </div>
+
             {% endfor %}
 
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
@@ -64,5 +123,5 @@
         </div>
     </div>
 </div>
-
+322
 {% endblock %}

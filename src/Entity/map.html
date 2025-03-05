@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search and Select Location</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+   #map-container {
+  width: 100%;
+  max-width: 600px; /* Adjust as needed */
+  height: 400px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+
+#map {
+  width: 100%;
+  height: 100%; /* Ensure the map is visible */
+}
+#search-container { margin-bottom: 10px; }
+    #search-input { width: 300px; padding: 10px; font-size: 16px; }
+    #search-button { padding: 10px; font-size: 16px; }
+    #location-details { margin-top: 10px; font-family: Arial, sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="search-container">
+    <input type="text" id="search-input" placeholder="Enter a place or address">
+    <button id="search-button">Search</button>
+  </div>
+  <div id="map-container">
+    <div id="map"></div>
+  </div>  <div id="location-details">
+    <!-- Location details will be displayed here -->
+  </div>
+  <script>
+    // Initialize the map
+    const map = L.map('map').setView([51.505, -0.09], 13); // Default view: London
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Add a marker for the searched/selected location
+    let marker;
+
+    // Function to search for a place using Nominatim API
+    function searchLocation(query) {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.length > 0) {
+            const { lat, lon, display_name } = data[0]; // Get the first result
+            const coords = [parseFloat(lat), parseFloat(lon)];
+
+            // Remove the previous marker (if any)
+            if (marker) {
+              map.removeLayer(marker);
+            }
+
+            // Add a new marker at the searched location
+            marker = L.marker(coords).addTo(map)
+              .bindPopup(`Searched Location:<br>${display_name}`)
+              .openPopup();
+
+            // Move the map to the searched location
+            map.flyTo(coords, 15); // Smoothly animate to the location
+
+            // Display location details
+            displayLocationDetails(display_name, lat, lon);
+          } else {
+            alert('Location not found. Please try another search.');
+          }
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Function to display location details
+    function displayLocationDetails(placeName, lat, lon) {
+      document.getElementById('location-details').innerHTML = `
+        <strong>Place Name:</strong> ${placeName}<br>
+        <strong>Latitude:</strong> ${lat}<br>
+        <strong>Longitude:</strong> ${lon}<br>
+        <strong>Zone Name:</strong> ${extractZoneName(placeName)}
+      `;
+    }
+
+    // Function to extract zone name (city, country, etc.) from display_name
+    function extractZoneName(displayName) {
+      // The display_name typically includes city, state, country, etc.
+      // Example: "London, Greater London, England, United Kingdom"
+      const parts = displayName.split(',').map(part => part.trim());
+      return parts.slice(0, 2).join(', '); // Return city and country
+    }
+
+    // Event listener for map clicks (selection)
+    map.on('click', function(e) {
+      const { lat, lng } = e.latlng; // Get latitude and longitude of the clicked location
+
+      // Reverse geocode to get the place name
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => { 
+          const display_name = data.display_name || 'Unknown Location';
+
+          // Remove the previous marker (if any)
+          if (marker) {
+            map.removeLayer(marker);
+          }
+
+          // Add a new marker at the clicked location
+          marker = L.marker([lat, lng]).addTo(map)
+            .bindPopup(`Selected Location:<br>${display_name}`)
+            .openPopup();
+
+          // Display location details
+          displayLocationDetails(display_name, lat, lng);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    });
+
+    // Add event listener for the search button
+    document.getElementById('search-button').addEventListener('click', function() {
+      const query = document.getElementById('search-input').value;
+      if (query) {
+        searchLocation(query);
+      } else {
+        alert('Please enter a place or address.');
+      }
+    });
+
+    // Optional: Allow pressing "Enter" to trigger the search
+    document.getElementById('search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const query = document.getElementById('search-input').value;
+        if (query) {
+          searchLocation(query);
+        } else {
+          alert('Please enter a place or address.');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

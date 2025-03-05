@@ -1,0 +1,230 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Weather Forecast{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    {# Warning Message #}
+    {% if warning != null %}
+    <div class="alert alert-danger text-center fw-bold" role="alert">
+        {{ warning }}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center fw-bold" role="alert">
+        No warnings at the moment: {{ description }}
+    </div>        
+    {% endif %}
+
+    {# Page Title #}
+    <h1 class="text-center mb-4">Weather Forecast</h1>
+
+    {# Small Forecast Cards #}
+    <div class="d-flex flex-row overflow-auto">
+        {% for date, items in groupedForecast %}
+            <div class="col flex-shrink-0" style="width: 200px; margin-right: 10px;">
+                <div class="card h-100 shadow-sm" onclick="showDetails({{ loop.index }})">
+                    <div class="card-header  text-white text-center">
+                        <h5 class="card-title mb-0">{{ date|date('D, M j') }}</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="http://openweathermap.org/img/wn/{{ items[0].weather[0].icon }}@2x.png" alt="{{ items[0].weather[0].description }}" class="mb-3" style="width: 50px;">
+                        <h2 class="mb-0">{{ items[0].main.temp }}°C</h2>
+                        <p class="text-muted mb-0">{{ items[0].weather[0].description|capitalize }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {# Detailed Dashboard #}
+    <div id="details-dashboard" class="d-none">
+        <div class="card mt-5">
+            <div class="card-header  text-white text-center">
+                <h5 id="details-date" class="card-title mb-0"></h5>
+            </div>
+            <div class="card-body">
+                <div id="details-content" class="row"></div>
+                <button class="card-header w-100 mt-3" onclick="hideDetails()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    {# No Forecast Data Message #}
+    {% if not groupedForecast %}
+        <div class="alert alert-info text-center">
+            No forecast data available.
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #00306E, #A1C0DF);
+        color: #fff;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+        max-width: 1200px;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+        background-color: transparent; /* Green color */
+        color: rgb(1, 1, 1); /* Text color */
+        border-radius: 10px 10px 0 0;
+    }
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .btn-outline-success {
+        border-radius: 5px;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    .d-none {
+        display: none;
+    }
+    #alert-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+    }
+
+    #alert-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+    }
+
+    /* dashboard wkadha  */
+    .card-block {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-block:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-block h6 {
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Function to display alerts
+    function showAlert(type, message) {
+        const alertContainer = document.getElementById('alert-container');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.role = 'alert';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        alertContainer.appendChild(alertDiv);
+
+        // Automatically remove alert after 5 seconds
+        setTimeout(() => {
+            alertDiv.classList.remove('show');
+            alertDiv.addEventListener('transitionend', () => alertDiv.remove());
+        }, 5000);
+    }
+
+    function showDetails(index) {
+    const detailsDashboard = document.getElementById('details-dashboard');
+    const detailsDate = document.getElementById('details-date');
+    const detailsContent = document.getElementById('details-content');
+
+    // Fetch the forecast details for the selected date
+    const forecast = {{ groupedForecast|json_encode|raw }};
+    const selectedDate = Object.keys(forecast)[index - 1];
+    const items = forecast[selectedDate];
+
+    // Update the dashboard content
+    detailsDate.textContent = new Date(selectedDate).toDateString();
+    detailsContent.innerHTML = `
+    <div class="col-12">
+            <div class="card-block">
+                <canvas id="line-chart" width="70" height="20"></canvas>
+            </div>
+        </div>
+        ${items.map(item => `
+            <div class="col-md-4">
+                <div class="card-block">
+                    <h6>${new Date(item.dt_txt).toLocaleTimeString()}</h6>
+                    <p><i class="fas fa-tint me-2"></i>Humidity: ${item.main.humidity}%</p>
+                    <p><i class="fas fa-wind me-2"></i>Wind Speed: ${item.wind.speed} m/s</p>
+                    <p><i class="fas fa-thermometer-half me-2"></i>Feels Like: ${item.main.feels_like}°C</p>
+                    <p><i class="fas fa-cloud me-2"></i>Cloudiness: ${item.clouds.all}%</p>
+                </div>
+            </div>
+        `).join('')}
+    `;
+
+    // Prepare data for the line chart
+    const labels = items.map(item => new Date(item.dt_txt).toLocaleTimeString());
+    const temperatures = items.map(item => item.main.temp);
+
+    // Render line chart
+    const ctx = document.getElementById('line-chart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Temperature (°C)',
+                data: temperatures,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+
+    // Show the dashboard
+    detailsDashboard.classList.remove('d-none');
+
+    // Show an alert when details are displayed
+    showAlert('info', `Showing details for ${new Date(selectedDate).toDateString()}`);
+}
+
+    function hideDetails() {
+        const detailsDashboard = document.getElementById('details-dashboard');
+        detailsDashboard.classList.add('d-none');
+    }
+</script>
+
+{% endblock %}

@@ -28,8 +28,13 @@
                 </div>
             </div>
             {% endfor %}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center cursor-pointer" data-href="{{ path('farm') }}" onclick="window.location.href=this.getAttribute('data-href')">
+                    <h1 class="text-white mb-0">+</h1>
+                </div>
+            </div>
         </div>
-
+            
         <!-- QR Code Modal -->
         <div id="qrCodeModal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-dialog-centered">

@@ -57,7 +57,6 @@ class Crop
     #[ORM\OneToMany(targetEntity: Soildata::class, mappedBy: 'crop')]
     private Collection $Soildata;
 
- 
   
 
 
@@ -185,9 +184,5 @@ class Crop
 
         return $this;
     }
-
-
-
-
 
 }

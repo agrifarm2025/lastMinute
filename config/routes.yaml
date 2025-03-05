@@ -4,11 +4,3 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
-
-generate_qr:
-    path: /generate-qr/{email}
-    controller: App\Controller\QRCodeController::generateQrCode
-
-scan_qr:
-    path: /scan-qr
-    controller: App\Controller\QRCodeController::scanQrCode

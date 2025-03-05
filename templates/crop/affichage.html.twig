@@ -17,12 +17,26 @@
             </div>
         </form>
 
+            <!-- 🗓️ Crop Calendar Button -->
+        <div class="text-center mt-3">
+            <a href="{{ path('crop_calendar') }}" class="btn btn-primary border-2 py-2 px-4 rounded-pill">
+                <i class="fas fa-calendar-alt me-2"></i> Crop Calendar
+            </a>
+        </div>
+
+        <!-- 📊 Crop Info Button -->
+        <div class="text-center mt-3">
+            <a href="{{ path('crop_Info') }}" class="btn btn-info border-2 py-2 px-4 rounded-pill">
+                <i class="fas fa-info-circle me-2"></i> Crop Info
+            </a>
+        </div>
+
         <div class="row g-4 d-flex align-items-stretch">
             <!-- Loop through crops -->
-            {% for f in pagination %}
+            {% for f in crops %}
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="bg-white text-center h-100 p-4 p-xl-5 shadow-sm rounded">
-                        <img class="img-fluid mb-4" src="{{ asset('Front/img/icon-1.png')}}" alt=""> {# No modification to image #}
+                        <img class="img-fluid mb-4" src="{{ asset('Front/img/icon-1.png')}}" alt="">
                         <p class="mb-2"><strong>Crop Event: </strong>{{ f.cropEvent }}</p>           
                         <p class="mb-2"><strong>Crop Type: </strong>{{ f.typeCrop }}</p>
                         <p class="mb-2"><strong>Plantation Date: </strong>{{ f.datePlantation|date('d-m-Y') }}</p>
@@ -43,14 +57,7 @@
             {% endfor %}
 
             <!-- Add Crop Button -->
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="bg-primary text-center h-100 p-4 p-xl-5 d-flex align-items-center justify-content-center rounded shadow-sm">
-                    <a href="{{ path('app_crop_add') }}" class="text-white text-decoration-none">
-                        <h1 class="text-white mb-0">+</h1>
-                        <p class="text-white">Add Crop</p>
-                    </a>
-                </div>
-            </div>
+           
         </div>
 
         <!-- QR Code Modal -->
@@ -81,8 +88,7 @@
             }
         </script>
 
-    </div>
-     <!-- Statistics Button -->
+        <!-- Statistics Button -->
         <div class="text-center mt-5">
             <a href="{{ path('app_soil_statistics') }}" class="btn btn-info border-2 py-2 px-4 rounded-pill">
                 <i class="fas fa-chart-bar me-2"></i> Statistics
@@ -95,5 +101,6 @@
                 <i class="fas fa-seedling me-2"></i> Generate Ideal Conditions
             </a>
         </div>
+    </div>
 </div>
 {% endblock %}
