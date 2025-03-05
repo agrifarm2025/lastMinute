@@ -46,12 +46,12 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255,nullable: true)]
+    #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le nom est obligatoire.")]
     #[Assert\Length(min: 3, max: 100, minMessage: "Le nom doit avoir au moins 3 caractères.")]
     private ?string $lastName = null;
 
-    #[ORM\Column(length: 255,nullable: true)]
+    #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le prenom est obligatoire.")]
     #[Assert\Length(min: 3, max: 100, minMessage: "Le prenom doit avoir au moins 3 caractères.")]
     private ?string $firstName = null;
@@ -63,7 +63,13 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $is_verified = false;
 
     #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetToken;
+
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $imageFileName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $google_id = null;
 
     
     public function __construct()
@@ -194,6 +200,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
     public function getImageFileName(): ?string
     {
         return $this->imageFileName;
@@ -202,6 +220,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setImageFileName(?string $imageFileName): static
     {
         $this->imageFileName = $imageFileName;
+
+        return $this;
+    }
+
+    public function getGoogleId(): ?string
+    {
+        return $this->google_id;
+    }
+
+    public function setGoogleId(?string $google_id): static
+    {
+        $this->google_id = $google_id;
 
         return $this;
     }
