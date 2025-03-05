@@ -39,7 +39,7 @@ services:
         arguments:
             $apiKey: '%openweathermap.api_key%'
             $apiEndpoint: '%openweathermap.api_endpoint%'
-
+    
     Twilio\Rest\Client:
         arguments:
             - '%env(TWILIO_SID)%'
