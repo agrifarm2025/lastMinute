@@ -7,16 +7,13 @@ use App\Entity\Commentaire;
 use Psr\Log\LoggerInterface;
 use App\Form\ArticleType;
 use App\Form\CommentaireType;
-
+use App\Repository\ArticleRepository;
+use App\Repository\CommentaireRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Controller\CommentaireRepository;
-use App\Repository\CommentaireRepository as RepositoryCommentaireRepository;
-use Doctrine\ORM\Query\Parameter;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ArticleController extends AbstractController
 {
@@ -32,8 +29,8 @@ class ArticleController extends AbstractController
 
             if ($image) {
                 $imageName = md5(uniqid()) . '.' . $image->guessExtension();
-                $image->move($this->getParameter('images_directory'), $imageName);
-                $article->setImage('uploads/images' . $imageName);
+                $image->move($this->getParameter('upload_directory'), $imageName);
+                $article->setImage('uploads/' . $imageName);
             }
 
             $entityManager->persist($article);
@@ -48,8 +45,9 @@ class ArticleController extends AbstractController
         ]);
     }
 
+
     #[Route('/article/{id}/edit', name: 'article_edit')]
-    public function edit(Request $request, Article $article, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag): Response
+    public function edit(Request $request,Article $article, EntityManagerInterface $entityManager): Response
     {
         // Create the form for editing the article
         $form = $this->createForm(ArticleType::class, $article);
@@ -67,20 +65,9 @@ class ArticleController extends AbstractController
             if ($image) {
                 // Generate a new filename and upload the image
                 $imageName = md5(uniqid()) . '.' . $image->guessExtension();
-                
-                // Get the directory to store images from the parameter
-                $uploadPath = $parameterBag->get('images_directory');
-                
-                // Ensure the upload directory exists
-                if (!file_exists($uploadPath)) {
-                    mkdir($uploadPath, 0777, true); // Create the directory if it doesn't exist
-                }
-                
-                // Move the image to the directory
+                $uploadPath = $this->getParameter('upload_directory'); // The directory to store images
                 $image->move($uploadPath, $imageName);
-                
-                // Update the image path in the database (relative path)
-                $article->setImage('uploads/images' . $imageName);
+                $article->setImage('uploads/' . $imageName);
     
                 // Optionally delete the old image if necessary
                 if ($oldImage) {
@@ -110,10 +97,9 @@ class ArticleController extends AbstractController
             'article' => $article,
         ]);
     }
-
     
 #[Route('/article/{id}', name: 'article_show')]
-public function show(Article $article, Request $request, RepositoryCommentaireRepository $commentaireRepository, EntityManagerInterface $entityManager): Response
+public function show(Article $article, Request $request, CommentaireRepository $commentaireRepository, EntityManagerInterface $entityManager): Response
 {
     // Create a new Commentaire object
     $comment = new Commentaire();
@@ -155,15 +141,46 @@ public function show(Article $article, Request $request, RepositoryCommentaireRe
     }
 
     #[Route('/article/{id}/delete', name: 'article_delete', methods: ['POST'])]
-    public function delete(Request $request, Article $article, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($article);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Article deleted successfully!');
-        }
-
+public function delete(Request $request, Article $article, EntityManagerInterface $entityManager): Response
+{
+    if (!$article) { 
+        $this->addFlash('error', 'Article not found.');
         return $this->redirectToRoute('article_list');
     }
+
+    foreach ($article->getCommentaire() as $commentaire) {
+        $entityManager->remove($commentaire);
+    }
+
+    $entityManager->remove($article);
+    $entityManager->flush();
+
+    $this->addFlash('success', 'Article and related comments deleted successfully.');
+    
+    return $this->redirectToRoute('article_list'); 
+}
+
+
+#[Route('/articlesback', name: 'article_listback')]
+public function listback(EntityManagerInterface $entityManager): Response
+{
+    $articles = $entityManager->getRepository(Article::class)->findAll();
+
+    return $this->render('article/ListArticleBack.html.twig', [
+        'articles' => $articles,
+    ]);
+}
+#[Route('/article/delete/{id}', name: 'article_deleteback')]
+public function deleteback(EntityManagerInterface $entityManager, int $id): Response
+{
+    $article = $entityManager->getRepository(Article::class)->find($id);
+
+    if ($article) {
+        $entityManager->remove($article);
+        $entityManager->flush();
+    }
+
+    return $this->redirectToRoute('article_listback');
+}
+
 }
