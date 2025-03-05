@@ -1,4 +1,4 @@
-{% extends 'base_front.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Create a New Article{% endblock %}
 
@@ -8,57 +8,64 @@
 
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
 
-                        <div class="form-group mb-4">
-                            <label for="{{ form.title.vars.id }}" class="form-label">Title</label>
-                            {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Enter article title'}}) }}
-                            {% if form.title.vars.errors %}
-                                <div class="text-danger">
-                                    {{ form_errors(form.title) }}
-                                </div>
-                            {% endif %}
+                <div class="form-group">
+                    {{ form_label(form.title) }}
+                    {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                    {% if form.title.vars.errors %}
+                        <div class="text-danger">
+                            {{ form_errors(form.title) }}
                         </div>
-
-                        <div class="form-group mb-4">
-                            <label for="{{ form.content.vars.id }}" class="form-label">Content</label>
-                            {{ form_widget(form.content, {'attr': {'class': 'form-control', 'placeholder': 'Write your article content...', 'rows': 5}}) }}
-                            {% if form.content.vars.errors %}
-                                <div class="text-danger">
-                                    {{ form_errors(form.content) }}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="form-group mb-4">
-                            <label for="{{ form.featuredText.vars.id }}" class="form-label">Featured Text</label>
-                            {{ form_widget(form.featuredText, {'attr': {'class': 'form-control', 'placeholder': 'Enter featured text'}}) }}
-                            {% if form.featuredText.vars.errors %}
-                                <div class="text-danger">
-                                    {{ form_errors(form.featuredText) }}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="form-group mb-4">
-                            <label for="{{ form.image.vars.id }}" class="form-label">Image</label>
-                            {{ form_widget(form.image, {'attr': {'class': 'form-control-file'}}) }}
-                            {% if form.image.vars.errors %}
-                                <div class="text-danger">
-                                    {{ form_errors(form.image) }}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Save</button>
-                        </div>
-
-                        {{ form_end(form) }}
-                    </div>
+                    {% endif %}
                 </div>
+
+                <div class="form-group">
+                    {{ form_label(form.slug) }}
+                    {{ form_widget(form.slug, {'attr': {'class': 'form-control'}}) }}
+                    {% if form.slug.vars.errors %}
+                        <div class="text-danger">
+                            {{ form_errors(form.slug) }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.content) }}
+                    {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+                    {% if form.content.vars.errors %}
+                        <div class="text-danger">
+                            {{ form_errors(form.content) }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.featuredText) }}
+                    {{ form_widget(form.featuredText, {'attr': {'class': 'form-control'}}) }}
+                    {% if form.featuredText.vars.errors %}
+                        <div class="text-danger">
+                            {{ form_errors(form.featuredText) }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.image) }}
+                    {{ form_widget(form.image, {'attr': {'class': 'form-control-file'}}) }}
+                    {% if form.image.vars.errors %}
+                        <div class="text-danger">
+                            {{ form_errors(form.image) }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {# Bouton Submit avec icône #}
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-check"></i> Submit
+                </button>
+
+                {{ form_end(form) }}
             </div>
         </div>
     </div>

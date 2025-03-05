@@ -45,7 +45,8 @@ class Article
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
-
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'articles')]
+    private Collection $categories;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     #[Assert\File(
@@ -61,7 +62,12 @@ class Article
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'article')]
     private Collection $commentaire;  // Correct class name
 
-   
+    public function __construct()
+    {
+        $this->categories = new ArrayCollection();
+        $this->commentaire = new ArrayCollection();  // Initialize the collection
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -133,7 +139,27 @@ class Article
         $this->updatedAt = new \DateTime();
     }
 
-    
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Category $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->addArticle($this);
+        }
+        return $this;
+    }
+
+    public function removeCategory(Category $category): static
+    {
+        if ($this->categories->removeElement($category)) {
+            $category->removeArticle($this);
+        }
+        return $this;
+    }
 
     public function getImage(): ?string
     {
