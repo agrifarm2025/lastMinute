@@ -1,7 +1,9 @@
-{% extends 'base_front.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block body %}
     <div class="container py-6">
+        <div id="google_translate_element"></div>
+
         <h1 class="text-center mb-5">Articles</h1>
 
         <div class="row">
@@ -47,5 +49,16 @@
                 <i class="fas fa-plus"></i> Create New Article
             </a>
         </div>
+        
     </div>
+
+    </div>
+    <script type="text/javascript">
+        var currentUtterance = null;
+
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ autoDisplay: false }, 'google_translate_element');
+        }
+    </script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 {% endblock %}

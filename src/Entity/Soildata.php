@@ -54,6 +54,7 @@ class Soildata
     #[ORM\ManyToOne(inversedBy: 'soildata')]
     private ?Crop $crop = null;
 
+
     public function getId(): ?int
     {
         return $this->id;
@@ -118,4 +119,5 @@ class Soildata
 
         return $this;
     }
+
 }
