@@ -28,26 +28,27 @@
                     
                     <div class="col-md-6">
                         <div class="form-floating">
-                            {{ form_widget(form.humidite, {'attr': {'class': 'form-control', 'placeholder': 'Type de culture'}}) }}
-                            {{ form_label(form.humidite, 'Type de culture', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.humidite, {'attr': {'class': 'form-control', 'placeholder': 'humidite'}}) }}
+                            {{ form_label(form.humidite, 'humidite', {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_errors(form.humidite) }}
                         </div>
                     </div>
                     
                     <div class="col-md-6">
                         <div class="form-floating">
-                            {{ form_widget(form.niveau_nutriment, {'attr': {'class': 'form-control', 'placeholder': 'Méthode de culture'}}) }}
-                            {{ form_label(form.niveau_nutriment, 'Méthode de culture', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.niveau_nutriment, {'attr': {'class': 'form-control', 'placeholder': 'niveau nutriment'}}) }}
+                            {{ form_label(form.niveau_nutriment, 'niveau nutriment', {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_errors(form.niveau_nutriment) }}
                         </div>
                     </div>
                     
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            {{ form_widget(form.type_sol, {'attr': {'class': 'form-control', 'placeholder': 'Date de plantation'}}) }}
-                            {{ form_label(form.type_sol, 'Date de plantation', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_errors(form.type_sol) }}
-                        </div>
+                  <div class="col-md-6">
+    <div class="form-floating">
+        {{ form_widget(form.type_sol, {'attr': {'class': 'form-control'}}) }}
+        {{ form_label(form.type_sol, 'Type de Sol', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_errors(form.type_sol) }}
+    </div>
+</div>
                     </div>
                     <div class="col-12 text-center mt-4">
                         <button type="submit" class="btn btn-primary rounded-pill py-3 px-5">Confirme</button>

@@ -18,11 +18,11 @@
                     <p class="mb-4"><strong>Address: </strong>{{ f.adress }}</p>
                     <p class="mb-4"><strong>Surface: </strong>{{ f.surface }}</p>
                     <p class="mb-4"><strong>Budget: </strong>{{ f.budget }} dt</p>
-
-                    <!-- QR Code Button -->
-                    <button class="btn btn-secondary rounded-pill py-2 px-4 mt-2" onclick="openQrModal({{ f.id }})">
-                        Generate QR Code
-                    </button>
+<!--
+                    <button class="btn btn-primary rounded-pill py-2 px-4 mt-2" onclick="openQrModal({{ f.id }})">
+                        check fields
+                    </button> -->
+                    <a class="btn btn-outline-primary border-2 py-2 px-4 rounded-pill" href="{{ path('list', {'id': f.id}) }}">Check details</a>
 
                     <a class="btn btn-outline-secondary border-2 py-2 px-4 rounded-pill" href="{{ path('farm_update', {'id': f.id}) }}">Modify</a>
                 </div>
