@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Controller;
-use App\Entity\Crop; 
 
-use App\Service\SoilGridsService;
+use App\Service\CropManageApiService;
 use App\Entity\Soildata;
 use App\Repository\SoildataRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,22 +13,26 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\Persistence\ManagerRegistry as PersistenceManagerRegistry;
 use App\Form\SoildataType;
 use App\Repository\CropRepository;
+use App\Entity\Crop; 
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+
 
 final class SoildataController extends AbstractController
 {
 
-    #[Route('/soildata/affichage', name: 'soildata_affichage')]
-    public function affichageSoil(SoildataRepository $soildataRepository, CropRepository $cropRepository): Response
+    #[Route('/soildata/affichage_soil/{id}', name: 'soildata_affichage', methods: ['GET'])]
+    public function affichageSoil(SoildataRepository $soildataRepository, CropRepository $cropRepository, int $id): Response
     {
-        // Fetch all soil data
-        $soil = $soildataRepository->findAll();
-    
-        // Fetch the crop (assuming you have a way to get the current crop, e.g., from the session or a specific ID)
-        $crop = $cropRepository->find(1); // Replace `1` with the actual crop ID or logic to fetch the crop
-    
+        // Fetch the crop by the provided ID
+        $crop = $cropRepository->find($id);
+        
         if (!$crop) {
             throw $this->createNotFoundException('Crop not found.');
         }
+    
+        // Fetch all soil data associated with the crop
+        $soil = $soildataRepository->findBy(['crop' => $crop]);
     
         return $this->render('soildata/affichage_soil.html.twig', [
             'soil' => $soil,
@@ -38,40 +41,68 @@ final class SoildataController extends AbstractController
 
         ]);
     }
-
+    
 
 
 
 
     #[Route('/soildata/addsoil/{cropId}', name: 'app_soil_add', defaults: ['cropId' => null])]
-    public function addsoil(Request $request, EntityManagerInterface $em, ?int $cropId): Response
-    {
-        if ($cropId) {
-            $crop = $em->getRepository(Crop::class)->find($cropId);
+    public function addsoil(
+        Request $request, 
+        EntityManagerInterface $em, 
+        CropManageApiService $cropManageApiService,
+        CropRepository $cropRepository, // Added CropRepository to fetch the crop
+        ?int $cropId
+    ): Response {
+        // ✅ Create new soil data object
+        $soil = new Soildata();
+    
+        // ✅ Fetch the crop by ID
+        if ($cropId !== null) {
+            $crop = $cropRepository->find($cropId);
             if (!$crop) {
-                throw $this->createNotFoundException("Crop not found");
+                throw $this->createNotFoundException('Crop not found.');
             }
-            $soil = new Soildata();
+            // ✅ Associate the soil data with the crop
             $soil->setCrop($crop);
-        } else {
-            $soil = new Soildata();
         }
     
-        $form = $this->createForm(SoildataType::class, $soil);
+        // ✅ Fetch soil types from API
+        $soilTypesFromApi = $cropManageApiService->getSoilTypes();
+    
+        // ✅ Convert API response to ChoiceType format
+        $soilTypeChoices = [];
+        foreach ($soilTypesFromApi as $soilType) {
+            $soilTypeChoices[$soilType['Name']] = $soilType['Name'];
+        }
+    
+        // ✅ Pass soil types to the form
+        $form = $this->createForm(SoildataType::class, $soil, ['soil_types' => $soilTypeChoices]);
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
+            // ✅ Ensure the soil is linked to a crop before persisting
+            if (!$soil->getCrop()) {
+                $this->addFlash('error', 'No crop selected for the soil data.');
+                return $this->redirectToRoute('crop_affichage');
+            }
+    
             $em->persist($soil);
             $em->flush();
     
             $this->addFlash('success', 'Soil ajouté avec succès !');
-            return $this->redirectToRoute('crop_affichage');
+    
+            // ✅ Redirect to the crop's soil data list
+            return $this->redirectToRoute('soildata_affichage', ['id' => $soil->getCrop()->getId()]);
         }
     
+        // ✅ Render the form and pass the crop ID
         return $this->render('soildata/addsoil.html.twig', [
             'form' => $form->createView(),
+            'crop' => $crop ?? null, // Pass the crop if available
         ]);
     }
+    
     
 
     #[Route('/updatesoil/{id}', name: 'app_updateformsoil')]
@@ -199,5 +230,39 @@ public function index(EntityManagerInterface $entityManager): Response
             'idealConditions' => $idealConditions,
         ]);
     }
+
+    #[Route('/soil/specificstats/{cropId}', name: 'app_crop_soil_statistics')]
+public function cropSoilStatistics(int $cropId, SoildataRepository $soilRepository, CropRepository $cropRepository): Response
+{
+    // Fetch the crop by ID
+    $crop = $cropRepository->find($cropId);
+    if (!$crop) {
+        throw $this->createNotFoundException('Crop not found.');
+    }
+
+    // Fetch only the soil data associated with the given crop
+    $soilData = $soilRepository->findBy(['crop' => $crop]);
+
+    // If no soil data exists, show an error
+    if (empty($soilData)) {
+        $this->addFlash('error', 'No soil data available for this crop.');
+        return $this->redirectToRoute('soildata_affichage', ['id' => $cropId]);
+    }
+
+    // Prepare data for statistics
+    $phLevels = array_map(fn($s) => $s->getNiveauPh(), $soilData);
+    $humidityLevels = array_map(fn($s) => $s->getHumidite(), $soilData);
+    $nutrientLevels = array_map(fn($s) => $s->getNiveauNutriment(), $soilData);
+
+    // Count occurrences of soil types
+
+    return $this->render('soildata/specificstats.html.twig', [
+        'crop' => $crop, // Pass crop details
+        'phLevels' => json_encode($phLevels),
+        'humidityLevels' => json_encode($humidityLevels),
+        'nutrientLevels' => json_encode($nutrientLevels),
+    ]);
+}
+
     
    }
