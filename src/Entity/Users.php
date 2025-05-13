@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UsersRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -71,10 +72,17 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $google_id = null;
 
+    /**
+     * @var Collection<int, Farm>
+     */
+    #[ORM\OneToMany(targetEntity: Farm::class, mappedBy: 'user_id')]
+    private Collection $farms;
+
     
     public function __construct()
     {
         $this->created_at = new \DateTimeImmutable();
+        $this->farms = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -232,6 +240,36 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGoogleId(?string $google_id): static
     {
         $this->google_id = $google_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Farm>
+     */
+    public function getFarms(): Collection
+    {
+        return $this->farms;
+    }
+
+    public function addFarm(Farm $farm): static
+    {
+        if (!$this->farms->contains($farm)) {
+            $this->farms->add($farm);
+            $farm->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFarm(Farm $farm): static
+    {
+        if ($this->farms->removeElement($farm)) {
+            // set the owning side to null (unless already changed)
+            if ($farm->getUserId() === $this) {
+                $farm->setUserId(null);
+            }
+        }
 
         return $this;
     }

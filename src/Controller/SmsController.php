@@ -20,7 +20,7 @@ class SmsController extends AbstractController
 
     #[Route("/send-sms/{id}", name:"send_sms")]
     public function sendSms($id,ManagerRegistry $m): Response
-    {
+    {  
         $em = $m->getManager();
         $farm = $em->getRepository(Farm::class)->find($id);
 

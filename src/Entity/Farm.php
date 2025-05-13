@@ -79,6 +79,11 @@ class Farm
         #[ORM\Column]
         private ?float $lat = null;
 
+        #[ORM\ManyToOne(inversedBy: 'farms')]
+        private ?Users $user_id = null;
+
+       
+
         
     
      
@@ -301,6 +306,20 @@ class Farm
 
         return $this;
     }
+
+    public function getUserId(): ?Users
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(?Users $user_id): static
+    {
+        $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    
 
     
 }
