@@ -4,7 +4,11 @@
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-lg-7 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+<<<<<<< HEAD
                 <div class="card shadow-sm p-4 animate__animated animate__fadeInUp"> <!-- Added animation class -->
+=======
+                <div class="card shadow-sm p-4 animate__animated animate__fadeInUp">
+>>>>>>> origin/market
                     <h2 class="form-title text-center mb-4">Add Crop</h2>
                     
                     {% for message in app.flashes('success') %}
@@ -72,6 +76,7 @@
                             {{ form_label(form.heureCrop, 'HeureCrop', {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_errors(form.heureCrop) }}
                         </div>
+<<<<<<< HEAD
                         <div class="col-12 text-center mt-4">
                             <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.8s">
                                 {{ form_widget(form.create, {'attr': {'class': 'btn btn-primary rounded-pill py-3 px-5','value':'Create field'}}) }}
@@ -83,4 +88,55 @@
             </div>
         </div>
     </div>
+=======
+                    </div>
+
+                    <!-- ✅ Champ Température -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" id="temperature" class="form-control" placeholder="Température" readonly>
+                            <label for="temperature">Température Actuelle (°C)</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-center mt-4">
+                        <a href="{{ path('crop_affichage') }}" class="btn btn-secondary rounded-pill py-3 px-5">Retour</a>
+                        <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.8s">
+                            {{ form_widget(form.create, {'attr': {'class': 'btn btn-primary rounded-pill py-3 px-5','value':'Create field'}}) }}
+                        </div>
+                    </div>
+                    {{ form_end(form) }}
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Script JavaScript pour récupérer la température -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // URL de l'ESP8266 (remplace avec l'IP correcte de ton serveur)
+        const espUrl = "http://192.168.70.1/projet/crop/temperature";
+
+        // Fonction pour récupérer la température
+        function fetchTemperature() {
+            fetch(espUrl)
+                .then(response => response.text())
+                .then(temp => {
+                    document.getElementById("temperature").value = temp + " °C";
+                })
+                .catch(error => {
+                    console.error("Erreur de récupération de la température :", error);
+                    document.getElementById("temperature").value = "⚠️ Indisponible";
+                });
+        }
+
+        // Charger la température immédiatement
+        fetchTemperature();
+
+        // Mettre à jour la température toutes les 5 secondes
+        setInterval(fetchTemperature, 5000);
+    });
+    </script>
+>>>>>>> origin/market
 {% endblock %}

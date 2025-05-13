@@ -62,39 +62,12 @@ class Field
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Crop $Crop = null;
-    
 
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
     }
 
-    // Parameterized constructor
-    public function autoField(
-        float $surface,
-        string $name,
-        ?Farm $Farm,
-        float $budget,
-        float $income,
-        float $outcome,
-        float $profit,
-        string $description,
-        ?Crop $Crop
-    ) {
-        
-        $this->surface = $surface;
-        $this->name = $name;
-        $this->Farm = $Farm;
-        $this->budget = $budget;
-        $this->income = $income;
-        $this->outcome = $outcome;
-        $this->profit = $profit;
-        $this->description = $description;
-        $this->Crop = $Crop;
-        $this->tasks = new ArrayCollection();
-    }
-
-   
     public function getId(): ?int
     {
         return $this->id;

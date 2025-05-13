@@ -1,4 +1,6 @@
+
 <?php
+/*
 // src/Controller/SmsController.php
 namespace App\Controller;
 
@@ -39,3 +41,4 @@ class SmsController extends AbstractController
         }
     }
 }
+*/

@@ -16,14 +16,7 @@ class FarmType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        ->add('location', TextType::class, ['label' => 'Location',
-        'attr' => ['id' => 'custom-location-id']])
-        ->add('lat', NumberType::class, ['label' => 'latitude',
-        'attr' => ['id' => 'custom-lat-id']])
-        ->add('lon', NumberType::class, ['label' => 'Longitude'
-        ,
-    'attr' => ['id' => 'custom-lon-id']])
-
+        ->add('location', TextType::class, ['label' => 'Location'])
         ->add('name', TextType::class, ['label' => 'Farm Name'])
         ->add('surface', NumberType::class, ['label' => 'Surface Area'])
         ->add('adress', TextType::class, ['label' => 'Address'])

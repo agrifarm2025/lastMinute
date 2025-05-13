@@ -109,7 +109,7 @@ public function edit(Request $request, EntityManagerInterface $em, Produit $prod
     {
         $em->remove($produit);
         $em->flush();
-        return $this->redirectToRoute('marketplace');
+        return $this->redirectToRoute('admin/app');
     }
 
     

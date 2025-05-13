@@ -38,7 +38,7 @@ final class FieldController extends AbstractController
         $field->setOutcome(0);
         $field->setProfit(0);
         $em->persist($field);  
-        $em->flush();
+        $em->flush();  
         
         return $this->redirectToRoute('list', ['id' => $field->getFarm()->getId()]);
         }
@@ -46,8 +46,8 @@ final class FieldController extends AbstractController
             'form'=>$form
         ]);  
     } 
-    #[Route('/deletefield/{id}', name: 'delete_field')]
-    public function deletefield(FieldRepository $rep,ManagerRegistry $m,Request $req,$id)
+    #[Route('/deletefield/{id}', name: 'delete_field')]  
+    public function deletefield(FieldRepository $rep,ManagerRegistry $m,Request $req,$id) // Use ManagerRegistry here  
     {  
         $em = $m->getManager();  
         $field=$rep->find($id);
@@ -67,7 +67,7 @@ final class FieldController extends AbstractController
         $form->handleRequest($req);
         if($form->isSubmitted() && $form->isValid()){
         $em->persist($field);  
-        $em->flush();
+        $em->flush();  
         return $this->redirectToRoute('list', ['id' => $field->getFarm()->getId()]);
         }
         return $this->render("front/field/fieldupdate.html.twig",[
@@ -87,7 +87,6 @@ final class FieldController extends AbstractController
         $done = $fieldRepository->getDone($field);
 
         return $this->render('front/task/tasktab.html.twig', [
-            'farm'=>$field->getFarm(),
             'id'=>$field->getFarm()->getId(),
             'field' => $field,
             'todo' => $todo,

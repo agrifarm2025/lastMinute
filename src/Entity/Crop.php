@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\CropRepository;
@@ -17,14 +16,15 @@ class Crop
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 30)] 
-   #[Assert\NotBlank(message: "La crop event est obligatoire.")]
+    #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: "La crop event est obligatoire.")]
     #[Assert\Length(
         min: 5,
         max: 30,
         minMessage: "La crop event doit contenir au moins 5 caractères.",
-        maxMessage: "La crop event ne peut pas dépasser 90 caractères."
-    )]    private ?string $crop_event = null;
+        maxMessage: "La crop event ne peut pas dépasser 30 caractères."
+    )]
+    private ?string $crop_event = null;
 
     #[ORM\Column(length: 30)]
     private ?string $type_crop = null;
@@ -33,30 +33,41 @@ class Crop
     private ?string $methode_crop = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-#[Assert\NotBlank(message: "date de plantation est obligatoire.")]
+    #[Assert\NotBlank(message: "La date de plantation est obligatoire.")]
     private ?\DateTimeInterface $date_plantation = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Assert\NotBlank(message: "heure de crop est obligatoire.")]
-#[Assert\Type(
-    type: "\DateTimeInterface",
-    message: "heure de crop doit être une date valide."
-)]
+    #[Assert\NotBlank(message: "L'heure de crop est obligatoire.")]
     private ?\DateTimeInterface $heure_crop = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Assert\NotBlank(message: "date de crop est obligatoire.")]
+    #[Assert\NotBlank(message: "La date de crop est obligatoire.")]
     private ?\DateTimeInterface $date_crop = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Assert\NotBlank(message: "heure plantation est obligatoire.")]
+    #[Assert\NotBlank(message: "L'heure de plantation est obligatoire.")]
     private ?\DateTimeInterface $heure_plantation = null;
-    /**
-     * @var Collection<int, Soildata>
-     */
-    #[ORM\OneToMany(targetEntity: Soildata::class, mappedBy: 'crop')]
-    private Collection $Soildata;
 
+    #[ORM\Column(type: Types::FLOAT)]
+    #[Assert\NotBlank(message: "La température est obligatoire.")]
+    #[Assert\Range(
+        min: -50,
+        max: 100,
+        notInRangeMessage: "La température doit être comprise entre -50 et 100 degrés."
+    )]
+    private ?float $temperature = null;
+
+    #[ORM\Column(type: Types::FLOAT)]
+    #[Assert\NotBlank(message: "L'humidité est obligatoire.")]
+    #[Assert\Range(
+        min: 0,
+        max: 100,
+        notInRangeMessage: "L'humidité doit être comprise entre 0 et 100%."
+    )]
+    private ?float $humidite = null;
+
+    #[ORM\OneToMany(targetEntity: Soildata::class, mappedBy: 'crop', cascade: ["persist", "remove"])]
+    private Collection $Soildata;
 
     public function __construct()
     {
@@ -73,10 +84,9 @@ class Crop
         return $this->crop_event;
     }
 
-    public function setCropEvent(string $crop_event): static
+    public function setCropEvent(string $crop_event): self
     {
         $this->crop_event = $crop_event;
-
         return $this;
     }
 
@@ -85,10 +95,9 @@ class Crop
         return $this->type_crop;
     }
 
-    public function setTypeCrop(string $type_crop): static
+    public function setTypeCrop(string $type_crop): self
     {
         $this->type_crop = $type_crop;
-
         return $this;
     }
 
@@ -97,10 +106,9 @@ class Crop
         return $this->methode_crop;
     }
 
-    public function setMethodeCrop(string $methode_crop): static
+    public function setMethodeCrop(string $methode_crop): self
     {
         $this->methode_crop = $methode_crop;
-
         return $this;
     }
 
@@ -109,10 +117,9 @@ class Crop
         return $this->date_plantation;
     }
 
-    public function setDatePlantation(\DateTimeInterface $date_plantation): static
+    public function setDatePlantation(\DateTimeInterface $date_plantation): self
     {
         $this->date_plantation = $date_plantation;
-
         return $this;
     }
 
@@ -121,10 +128,9 @@ class Crop
         return $this->heure_crop;
     }
 
-    public function setHeureCrop(\DateTimeInterface $heure_crop): static
+    public function setHeureCrop(\DateTimeInterface $heure_crop): self
     {
         $this->heure_crop = $heure_crop;
-
         return $this;
     }
 
@@ -133,10 +139,9 @@ class Crop
         return $this->date_crop;
     }
 
-    public function setDateCrop(\DateTimeInterface $date_crop): static
+    public function setDateCrop(\DateTimeInterface $date_crop): self
     {
         $this->date_crop = $date_crop;
-
         return $this;
     }
 
@@ -145,42 +150,55 @@ class Crop
         return $this->heure_plantation;
     }
 
-    public function setHeurePlantation(\DateTimeInterface $heure_plantation): static
+    public function setHeurePlantation(\DateTimeInterface $heure_plantation): self
     {
         $this->heure_plantation = $heure_plantation;
-
         return $this;
     }
 
+    public function getTemperature(): ?float
+    {
+        return $this->temperature;
+    }
 
-    /**
-     * @return Collection<int, Soildata>
-     */
+    public function setTemperature(float $temperature): self
+    {
+        $this->temperature = $temperature;
+        return $this;
+    }
+
+    public function getHumidite(): ?float
+    {
+        return $this->humidite;
+    }
+
+    public function setHumidite(float $humidite): self
+    {
+        $this->humidite = $humidite;
+        return $this;
+    }
+
     public function getSoildata(): Collection
     {
         return $this->Soildata;
     }
 
-    public function addSoildatum(Soildata $soildatum): static
+    public function addSoildatum(Soildata $soildatum): self
     {
         if (!$this->Soildata->contains($soildatum)) {
             $this->Soildata->add($soildatum);
             $soildatum->setCrop($this);
         }
-
         return $this;
     }
 
-    public function removeSoildatum(Soildata $soildatum): static
+    public function removeSoildatum(Soildata $soildatum): self
     {
         if ($this->Soildata->removeElement($soildatum)) {
-            // set the owning side to null (unless already changed)
             if ($soildatum->getCrop() === $this) {
                 $soildatum->setCrop(null);
             }
         }
-
         return $this;
     }
-
 }
