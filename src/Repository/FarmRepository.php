@@ -29,6 +29,22 @@ class FarmRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Find all farms belonging to a specific user
+     * @param int $userId The ID of the user
+     * @return Farm[] Returns an array of Farm objects
+     */
+    public function findByUserId($userId): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('f.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     //    /**
     //     * @return Farm[] Returns an array of Farm objects
     //     */

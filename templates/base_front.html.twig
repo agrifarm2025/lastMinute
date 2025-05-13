@@ -80,9 +80,24 @@
                     <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
                         <small class="fa fa-search text-body"></small>
                     </a>
-                    <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
+                    {% if app.user %}
+                    <div class="nav-item dropdown">
+                        <a href="#" class="btn-sm-square bg-white rounded-circle ms-3 dropdown-toggle" data-bs-toggle="dropdown">
+                            <small class="fa fa-user text-body"></small>
+                        </a>
+                        <div class="dropdown-menu m-0">
+                            <div class="dropdown-item disabled">ID: {{ app.user.id }}</div>
+                            <div class="dropdown-item disabled">{{ app.user.email }}</div>
+                            <div class="dropdown-divider"></div>
+                            <a href="{{ path('app_profile') }}" class="dropdown-item">Profile</a>
+                            <a href="{{ path('app_logout') }}" class="dropdown-item">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a class="btn-sm-square bg-white rounded-circle ms-3" href="{{ path('app_login') }}">
                         <small class="fa fa-user text-body"></small>
                     </a>
+                    {% endif %}
                     <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
                         <small class="fa fa-shopping-bag text-body"></small>
                     </a>

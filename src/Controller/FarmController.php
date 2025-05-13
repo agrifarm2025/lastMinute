@@ -153,14 +153,26 @@ class FarmController extends AbstractController
         ]);
     }
     #[Route('/farm', name: 'farm')]
+    #[Route('/farm', name: 'farm')]
     public function farm(ManagerRegistry $m, Request $req): Response
     {  
+        // Get the current user
+        $user = $this->getUser();
+        
+        // Redirect to login if no user is authenticated
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+        
         $em = $m->getManager();  
         $farm = new Farm();  
         $form = $this->createForm(FarmType::class, $farm);
         $form->handleRequest($req);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Associate the farm with the current user
+            $farm->setUserId($user);
+            
             $em->persist($farm);
 
             // Creating a field associated with the farm
@@ -183,22 +195,32 @@ class FarmController extends AbstractController
             $em->flush();
             return $this->redirectToRoute('farmtab');
         }
-
         return $this->render("front/farm/farmcreate.html.twig",[
             'form' => $form->createView()
         ]);  
     }  
 
     #[Route('/farmtab', name: 'farmtab')]
-    public function farmdisplay(FarmRepository $farm)
+    public function farmdisplay(FarmRepository $farmRepository)
     {
-        $farmdb=$farm->findall();
+        // Get the current user
+        $user = $this->getUser();
+        
+        if ($user) {
+            // User is logged in, fetch only their farms
+            $userId = $user->getId();
+            $farms = $farmRepository->findByUserId($userId);
+        } else {
+            // No user logged in, get all farms or redirect to login
+            // Uncomment the next line to redirect to login if no user
+            // return $this->redirectToRoute('app_login');
+            $farms = $farmRepository->findAll();
+        }
+        
         return $this->render("front/farm/farmtab.html.twig", [
-            "tab"=> $farmdb
-            
+            "tab" => $farms,
+            "user" => $user // Pass user to template
         ]);
-
-
     }
    
 #[Route('/deletefarm/{id}', name: 'delete_farm')]  
